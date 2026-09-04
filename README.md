@@ -1,13 +1,13 @@
 # A & W Fencing Quiz
 
-A standalone, mobile-first estimate quiz for [A & W Fencing](https://www.a-wfencing.com/), adapted from the Elite Glass & Window quiz funnel and deployed with Cloudflare Workers Static Assets.
+A standalone, mobile-first estimate quiz for [A & W Fencing](https://www.a-wfencing.com/), adapted from the Elite Glass & Window quiz funnel and deployed with Git-integrated Cloudflare Pages.
 
 ## Routes
 
 - `/a` - concise landing page and quiz
 - `/b` or `/` - landing page, fencing gallery, and quiz
 
-Both routes use the same five-question estimate flow. The contact form requires explicit call/SMS consent and sends accepted submissions to the existing Houzflow lead router with `quiz_profile: "a_w_fencing"`. The success screen appears only after the router accepts the request.
+Both routes use the same five-question estimate flow. The Pages build creates dedicated `/a` and `/b` route entries from the canonical `public/index.html`. The contact form requires explicit call/SMS consent and sends accepted submissions to the existing Houzflow lead router with `quiz_profile: "a_w_fencing"`. The success screen appears only after the router accepts the request.
 
 ## Local development
 
@@ -23,7 +23,7 @@ npm run dev
 npm run deploy
 ```
 
-The Worker name is `client-a-w-fencing-quiz`. Static assets are served from `public/`, and SPA fallback keeps `/a` and `/b` working as direct URLs.
+The Pages project is `client-a-w-fencing-quiz`, connected to `sidbhand-jpg/client-a-w-fencing-quiz` on `main`. Cloudflare runs `npm run build` and publishes `dist/`; pushes to `main` deploy automatically.
 
 ## Content and assets
 

@@ -1,8 +1,8 @@
 import { readFile, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
-const root = new URL("../", import.meta.url);
 const publicDir = new URL("../public/", import.meta.url);
+const distDir = new URL("../dist/", import.meta.url);
 const index = await readFile(new URL("index.html", publicDir), "utf8");
 const config = await readFile(new URL("config.js", publicDir), "utf8");
 
@@ -25,5 +25,6 @@ for (const [, assetPath] of assetMatches) {
   await stat(fileURLToPath(new URL(assetPath.replace(/^\//, ""), publicDir)));
 }
 
-await stat(new URL("wrangler.jsonc", root));
+await stat(new URL("a/index.html", distDir));
+await stat(new URL("b/index.html", distDir));
 console.log(`Validated ${assetMatches.length} configured asset references.`);

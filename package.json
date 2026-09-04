@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "check": "node --check public/config.js && node scripts/check-site.mjs",
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "build": "node scripts/build-pages.mjs",
+    "check": "node --check public/config.js && npm run build && node scripts/check-site.mjs",
+    "dev": "npm run build && wrangler pages dev dist",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name client-a-w-fencing-quiz --branch main"
   },
   "devDependencies": {
     "wrangler": "^4.35.0"

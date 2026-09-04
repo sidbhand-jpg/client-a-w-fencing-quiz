@@ -1,7 +1,0 @@
-.git/
-.github/
-node_modules/
-.wrangler/
-README.md
-package-lock.json
-wrangler.jsonc
