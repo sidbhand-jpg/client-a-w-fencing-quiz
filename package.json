@@ -1,0 +1,13 @@
+{
+  "name": "client-a-w-fencing-quiz",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "check": "node --check public/config.js && node scripts/check-site.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.35.0"
+  }
+}

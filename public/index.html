@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Fence Estimate | A & W Fencing</title>
+  <meta name="description" content="Tell A & W Fencing about your residential, commercial, or agricultural fence project and request a free estimate in the Lake Norman area." />
+  <link rel="icon" href="/assets/logo.png" type="image/png" />
+
+  <script>
+    document.documentElement.dataset.funnelVariant =
+      /^\/a(?:\/|$)/i.test(window.location.pathname) ? 'a' : 'b';
+  </script>
+
+  <!-- CONFIG — must load before this file -->
+  <script src="/config.js"></script>
+  <script src="https://unpkg.com/lucide@1.37.0/dist/umd/lucide.min.js"></script>
+  <script>
+    if (!window.CONFIG) {
+      document.documentElement.innerHTML = `
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Configuration Error</title>
+          <style>
+            body {
+              margin: 0;
+              min-height: 100vh;
+              display: grid;
+              place-items: center;
+              padding: 24px;
+              background: #0f172a;
+              color: #e2e8f0;
+              font-family: Arial, sans-serif;
+            }
+            .config-error {
+              max-width: 680px;
+              padding: 24px;
+              border: 1px solid rgba(148, 163, 184, 0.35);
+              border-radius: 16px;
+              background: rgba(15, 23, 42, 0.92);
+            }
+            .config-error h1 {
+              margin: 0 0 12px;
+              font-size: 24px;
+            }
+            .config-error p {
+              margin: 0 0 10px;
+              line-height: 1.6;
+            }
+            .config-error code {
+              color: #93c5fd;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="config-error">
+            <h1>config.js did not load</h1>
+            <p>This template requires <code>index.html</code> and lowercase <code>config.js</code> to be deployed together in the same folder.</p>
+            <p>If you are using Cloudflare, make sure the deploy includes both files and that <code>config.js</code> is publicly served at this same URL level.</p>
+          </div>
+        </body>
+      `;
+    }
+  </script>
+
+  <!-- Google Fonts — injected dynamically from CONFIG -->
+  <link id="gfonts" rel="stylesheet" href="" />
+
+  <!-- MICROSOFT CLARITY — ID set in CONFIG.clarityId -->
+  <script>
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;
+      window._clarityTag=t;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window,document,"clarity","script");
+  </script>
+
+  <!-- META PIXEL — ID set in CONFIG.metaPixelId -->
+  <script>
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      window._metaTag=t;
+      s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);
+    }(window,document,'script');
+  </script>
+
+  <style>
+    /* ── CSS VARIABLES — set from CONFIG in JS boot ── */
+    :root {
+      --primary:       #2563EB;
+      --primary-dark:  #1D4ED8;
+      --primary-light: #3B82F6;
+      --bg:            #FFFFFF;
+      --surface:       #F8FAFC;
+      --text:          #0F172A;
+      --text-muted:    #64748B;
+      --border:        #E2E8F0;
+      --success:       #16A34A;
+      --lander-from:   #0F172A;
+      --lander-to:     #1E3A5F;
+      --heading-font:  'Sora', sans-serif;
+      --body-font:     'Inter', sans-serif;
+      --radius:        14px;
+      --shadow:        0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       LANDER SCREEN
+    ══════════════════════════════════════════════════════ */
+
+    /* Full-viewport dark lander — only shown on step 0 */
+    .lander-screen {
+      min-height: 100vh;
+      background: linear-gradient(160deg, var(--lander-from) 0%, var(--lander-to) 100%);
+      display: flex;
+      flex-direction: column;
+      animation: fadeUp 0.4s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    /* Lander topbar */
+    .lander-topbar {
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .lander-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-right: 10px;
+    }
+    .lander-logo-img {
+      height: 40px;
+      width: auto;
+      display: block;
+      margin-right: 10px;
+    }
+    .lander-logo-text {
+      font-family: var(--heading-font);
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .lander-logo-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* Lander content */
+    .lander-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 24px 48px;
+      max-width: 540px;
+      margin: 0 auto;
+      width: 100%;
+      text-align: center;
+    }
+
+    .lander-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #EAF3FA;
+      border: 1px solid #AFCBE1;
+      color: #004080;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+
+    .lander-headline {
+      font-family: var(--heading-font);
+      font-weight: 800;
+      font-size: clamp(26px, 7vw, 38px);
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .lander-headline span {
+      color: var(--primary);
+    }
+
+    .lander-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    /* Crew photo */
+    .crew-photo-wrap {
+      width: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 64, 128, 0.16);
+    }
+    .crew-photo {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+    }
+    .crew-photo-placeholder {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #EAF3FA, #C8DDED);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #004080;
+      font-size: 14px;
+    }
+    .crew-photo-placeholder .placeholder-icon {
+      font-size: 48px;
+      opacity: 0.6;
+    }
+    /* Subtle overlay gradient at bottom of photo */
+    .crew-photo-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40%;
+      background: linear-gradient(to top, rgba(0,47,95,0.20), transparent);
+      pointer-events: none;
+    }
+
+    /* Bullet points */
+    .lander-bullets {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 28px;
+      text-align: left;
+      width: 100%;
+    }
+    .lander-bullet {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* CTA button on lander */
+    .lander-cta {
+      width: 100%;
+      padding: 20px 24px;
+      background: var(--primary);
+      color: #fff;
+      font-family: var(--heading-font);
+      font-weight: 700;
+      font-size: 18px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 28px rgba(0,64,128,0.26);
+      letter-spacing: 0.2px;
+    }
+    .lander-cta:hover  { background: var(--primary-dark); box-shadow: 0 10px 40px rgba(0,64,128,0.34); }
+    .lander-cta:active { transform: scale(0.98); }
+
+    .lander-trust {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Type B proof sections */
+    .proof-sections { background: var(--bg); }
+    html[data-funnel-variant="a"] .proof-sections { display: none !important; }
+    .proof-section { padding: 72px 24px; }
+    .proof-section.alt { background: var(--surface); }
+    .proof-inner { width: min(1080px, 100%); margin: 0 auto; }
+    .section-heading { max-width: 680px; margin: 0 auto 34px; text-align: center; }
+    .section-eyebrow {
+      color: var(--primary); font-size: 12px; font-weight: 800;
+      letter-spacing: .12em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .section-title {
+      color: var(--text); font-family: var(--heading-font); font-size: clamp(25px, 4vw, 38px);
+      line-height: 1.15; margin-bottom: 12px;
+    }
+    .section-copy { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+    .gallery-carousel { position: relative; }
+    .gallery-viewport {
+      overflow: hidden; border-radius: 20px; background: #dceaf5; box-shadow: var(--shadow);
+      touch-action: pan-y; cursor: grab;
+    }
+    .gallery-viewport:active { cursor: grabbing; }
+    .gallery-track { display: flex; transition: transform .55s cubic-bezier(.22,.61,.36,1); }
+    .gallery-card {
+      position: relative; flex: 0 0 100%; min-width: 0; aspect-ratio: 16 / 9; overflow: hidden;
+      background: #dceaf5;
+    }
+    .gallery-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gallery-card::after {
+      content: ''; position: absolute; inset: 38% 0 0;
+      background: linear-gradient(to bottom, transparent, rgba(0, 35, 70, .88));
+    }
+    .gallery-label {
+      position: absolute; z-index: 1; left: 28px; right: 28px; bottom: 25px;
+      color: #fff; font-family: var(--heading-font); font-size: clamp(18px, 2.6vw, 25px); font-weight: 700;
+    }
+    .gallery-location { display: block; margin-top: 5px; font-family: var(--body-font); font-size: 13px; font-weight: 600; color: rgba(255,255,255,.82); }
+    .gallery-arrow {
+      position: absolute; z-index: 2; top: 50%; width: 44px; height: 44px; display: grid; place-items: center;
+      border: 1px solid rgba(255,255,255,.7); border-radius: 50%; color: var(--primary-dark);
+      background: rgba(255,255,255,.94); box-shadow: 0 5px 18px rgba(0,35,70,.2); cursor: pointer;
+      transform: translateY(-50%); transition: transform .2s ease, background .2s ease;
+    }
+    .gallery-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.05); }
+    .gallery-arrow:focus-visible { outline: 3px solid rgba(255,255,255,.9); outline-offset: 3px; }
+    .gallery-arrow.prev { left: 18px; }
+    .gallery-arrow.next { right: 18px; }
+    .gallery-footer { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 18px; }
+    .gallery-dots { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .gallery-dot { width: 9px; height: 9px; padding: 0; border: 0; border-radius: 50%; background: #b7c5d3; cursor: pointer; transition: width .2s ease, background .2s ease; }
+    .gallery-dot[aria-current="true"] { width: 26px; border-radius: 999px; background: var(--primary); }
+    .gallery-count { min-width: 42px; color: var(--text-muted); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .google-summary {
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+      width: fit-content; margin: 0 auto 30px; padding: 14px 18px;
+      border: 1px solid var(--border); border-radius: 14px; background: #fff;
+    }
+    .google-mark { font: 800 28px/1 Arial, sans-serif; color: #4285f4; }
+    .google-stars { color: #fbbc04; letter-spacing: 2px; font-size: 18px; }
+    .google-label { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+    .rating-badge {
+      display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0;
+      padding: 9px 12px; border: 1px solid var(--border); border-radius: 12px;
+      background: rgba(255,255,255,.96); box-shadow: 0 2px 10px rgba(15,23,42,.08);
+    }
+    .rating-badge-stars { color: #fbbc04; font-size: 14px; letter-spacing: 1px; line-height: 1; }
+    .rating-badge-label { color: #334155; font-size: 11px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
+    .review-highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .review-card {
+      padding: 24px; border: 1px solid var(--border); border-radius: 16px;
+      background: #fff; text-align: left;
+    }
+    .review-author { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .review-avatar {
+      width: 42px; height: 42px; display: grid; place-items: center; flex: 0 0 42px;
+      border-radius: 50%; color: #fff; background: var(--primary); font-weight: 800; font-size: 13px;
+    }
+    .review-card h3 { font-family: var(--heading-font); font-size: 16px; margin-bottom: 2px; }
+    .review-contributor { color: var(--text-muted); font-size: 11px; }
+    .review-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .review-rating .stars { color: #fbbc04; letter-spacing: 1px; font-size: 15px; }
+    .review-date { color: var(--text-muted); font-size: 11px; }
+    .review-card p { color: #475569; font-size: 14px; line-height: 1.65; }
+    .bottom-cta {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: fit-content; margin: 28px auto 0; padding: 14px 22px;
+      border-radius: 12px; font-family: var(--heading-font); font-weight: 700;
+      text-decoration: none; cursor: pointer;
+    }
+    .bottom-proof-cta { text-align: center; padding: 58px 24px; background: var(--primary-dark); color: #fff; }
+    .bottom-proof-cta h2 { font-family: var(--heading-font); font-size: clamp(24px, 4vw, 36px); margin-bottom: 10px; }
+    .bottom-proof-cta p { color: rgba(255,255,255,.8); line-height: 1.6; }
+    .bottom-cta { border: 0; color: var(--primary-dark); background: #fff; font-size: 16px; }
+
+    @media (max-width: 720px) {
+      .proof-section { padding: 54px 18px; }
+      .gallery-card { aspect-ratio: 4 / 3; }
+      .gallery-label { left: 20px; right: 20px; bottom: 18px; }
+      .gallery-arrow { width: 40px; height: 40px; }
+      .gallery-arrow.prev { left: 10px; }
+      .gallery-arrow.next { right: 10px; }
+      .review-highlights { grid-template-columns: 1fr; }
+      .lander-topbar { padding: 14px 16px; }
+      .rating-badge { padding: 8px 9px; gap: 6px; }
+      .rating-badge-stars { font-size: 12px; letter-spacing: 0; }
+      .rating-badge-label { font-size: 10px; }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       QUIZ CHROME (topbar + progress) — hidden on lander
+    ══════════════════════════════════════════════════════ */
+
+    .quiz-chrome { display: none; }
+    .quiz-chrome.visible { display: block; }
+
+    /* Topbar */
+    .topbar {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo-wrap { display: flex; align-items: center; gap: 10px; }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: var(--primary);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .logo-img  { height: 40px; width: auto; display: block; }
+    .logo-text {
+      font-family: var(--heading-font);
+      font-weight: 700; font-size: 17px;
+      color: var(--text); line-height: 1.2;
+    }
+    .logo-sub  { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+    /* Progress bar */
+    .progress-bar-wrap { height: 4px; background: var(--border); width: 100%; }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      transition: width 0.4s cubic-bezier(.4,0,.2,1);
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       QUIZ FUNNEL WRAP
+    ══════════════════════════════════════════════════════ */
+
+    .funnel-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px 48px;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Animated screen ── */
+    .screen {
+      width: 100%;
+      animation: fadeUp 0.35s cubic-bezier(.4,0,.2,1) both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .screen.exit {
+      animation: fadeOut 0.2s ease both;
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateY(-12px); }
+    }
+
+    /* ── Question screen ── */
+    .q-progress-label {
+      font-size: 13px; color: var(--text-muted);
+      font-weight: 500; text-align: center;
+      margin-top: 32px; margin-bottom: 12px;
+    }
+    .q-headline {
+      font-family: var(--heading-font);
+      font-weight: 800;
+      font-size: clamp(20px, 5vw, 28px);
+      line-height: 1.22; color: var(--text);
+      margin-bottom: 28px;
+    }
+
+    /* ── Image grid options ── */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-bottom: 24px;
+    }
+    .option-card {
+      border-radius: var(--radius); overflow: hidden;
+      cursor: pointer; border: 2px solid transparent;
+      transition: border-color 0.18s, transform 0.15s, box-shadow 0.18s;
+      background: var(--surface); box-shadow: var(--shadow);
+    }
+    .option-card:active { transform: scale(0.97); }
+    .option-card.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,64,128,0.15);
+    }
+    .option-card-img {
+      width: 100%; aspect-ratio: 4/3;
+      object-fit: cover; display: block; background: #ddd;
+    }
+    .option-card-img-placeholder {
+      width: 100%; aspect-ratio: 4/3;
+      background: linear-gradient(135deg, #f0f4ff, #dbe4ff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+    }
+    .option-card-label {
+      background: var(--primary);
+      color: #fff; font-family: var(--heading-font);
+      font-weight: 700; font-size: 14px;
+      text-align: center; padding: 10px 8px;
+      min-height: 56px;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      line-height: 1.25;
+    }
+    .option-card-label svg { width: 18px; height: 18px; flex: 0 0 18px; stroke-width: 2.2; }
+    .option-card.selected .option-card-label { background: var(--primary-dark); }
+
+    /* ── Button list options ── */
+    .options-list {
+      display: flex; flex-direction: column;
+      gap: 10px; margin-bottom: 24px;
+    }
+    .option-btn {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px; cursor: pointer;
+      transition: border-color 0.18s, background 0.18s, transform 0.12s;
+      text-align: left; width: 100%;
+      font-family: var(--body-font);
+    }
+    .option-btn:active { transform: scale(0.98); }
+    .option-btn.selected,
+    .option-btn:hover {
+      border-color: var(--primary);
+      background: #EFF6FF;
+    }
+    .option-btn .option-icon {
+      width: 38px; height: 38px; flex: 0 0 38px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--primary); background: #EAF3FA;
+      border-radius: 10px;
+    }
+    .option-btn .option-icon svg { width: 21px; height: 21px; stroke-width: 2; }
+    .option-btn:hover .option-icon,
+    .option-btn.selected .option-icon { color: #fff; background: var(--primary); }
+    .option-btn .btn-label { font-weight: 600; font-size: 15px; color: var(--text); line-height: 1.3; }
+    .option-btn.selected .btn-label { color: var(--primary); }
+
+    /* ── Form screen ── */
+    .form-eyebrow { font-size: 16px; text-align: center; margin-top: 32px; margin-bottom: 8px; }
+    .form-headline {
+      font-family: var(--heading-font); font-weight: 800;
+      font-size: clamp(20px, 5vw, 26px); line-height: 1.22;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .form-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
+
+    .form-field { position: relative; margin-bottom: 12px; }
+    .form-input {
+      width: 100%;
+      padding: 16px 16px 16px 48px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 15px; font-family: var(--body-font);
+      color: var(--text); background: var(--surface);
+      transition: border-color 0.18s; outline: none;
+      -webkit-appearance: none;
+    }
+    .form-input:focus { border-color: var(--primary); background: #fff; }
+    .form-input::placeholder { color: var(--text-muted); }
+    .field-icon {
+      position: absolute; left: 15px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px; pointer-events: none;
+    }
+
+    /* Zip code field — no left icon padding override */
+    .zip-field .form-input { padding-left: 48px; }
+
+    .privacy-note {
+      font-size: 12px; color: var(--text-muted);
+      text-align: center; margin-top: 10px;
+      display: flex; align-items: center;
+      justify-content: center; gap: 5px;
+    }
+
+    .submission-error {
+      min-height: 20px;
+      margin: 10px 0 0;
+      color: #b42318;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    /* ── Primary button ── */
+    .btn-primary {
+      display: flex; align-items: center;
+      justify-content: center; gap: 8px;
+      width: 100%; padding: 18px 24px;
+      background: var(--primary); color: #fff;
+      font-family: var(--heading-font); font-weight: 700;
+      font-size: 17px; border: none;
+      border-radius: var(--radius); cursor: pointer;
+      transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+      margin-top: 8px; letter-spacing: 0.2px;
+      box-shadow: 0 4px 14px rgba(0,64,128,0.3);
+    }
+    .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 6px 20px rgba(0,64,128,0.35); }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    /* ── Back button ── */
+    .back-btn {
+      background: none; border: none;
+      color: var(--text-muted); font-size: 13px;
+      font-family: var(--body-font); cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+      padding: 8px 0; margin-top: 12px;
+      transition: color 0.15s;
+    }
+    .back-btn:hover { color: var(--primary); }
+
+    /* ── Spinner ── */
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2.5px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Thank you screen ── */
+    .thankyou-wrap { text-align: center; padding: 48px 0 0; }
+    .thankyou-icon {
+      width: 80px; height: 80px;
+      background: #f0fdf4; border-radius: 50%;
+      display: flex; align-items: center;
+      justify-content: center; font-size: 40px;
+      margin: 0 auto 24px;
+      animation: popIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .thankyou-headline {
+      font-family: var(--heading-font); font-weight: 800;
+      font-size: clamp(24px, 6vw, 32px);
+      color: var(--text); margin-bottom: 14px;
+    }
+    .thankyou-body {
+      font-size: 16px; color: var(--text-muted);
+      line-height: 1.7; margin-bottom: 36px;
+    }
+    .thankyou-divider {
+      width: 40px; height: 3px;
+      background: var(--primary); border-radius: 2px;
+      margin: 0 auto 28px;
+    }
+    .call-prompt { font-size: 14px; color: var(--text-muted); margin-bottom: 14px; }
+    .btn-call {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 32px; background: var(--primary); color: #fff;
+      font-family: var(--heading-font); font-weight: 700;
+      font-size: 17px; border-radius: var(--radius);
+      text-decoration: none;
+      transition: background 0.18s, transform 0.12s;
+      box-shadow: 0 4px 14px rgba(0,64,128,0.3);
+    }
+    .btn-call:hover  { background: var(--primary-dark); }
+    .btn-call:active { transform: scale(0.97); }
+    .hours-note { font-size: 12px; color: var(--text-muted); margin-top: 12px; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 20px;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+    .footer-links {
+      display: flex; justify-content: center;
+      gap: 24px; flex-wrap: wrap; margin-bottom: 8px;
+    }
+    .footer-links a {
+      font-size: 12px; color: var(--text-muted);
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-copy { font-size: 11px; color: #ccc; }
+
+    /* ── SMS opt-in checkbox ── */
+    .sms-consent-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+    .sms-consent-wrap input[type="checkbox"] {
+      width: 18px; height: 18px;
+      flex-shrink: 0; margin-top: 2px;
+      accent-color: var(--primary); cursor: pointer;
+    }
+    .sms-consent-label {
+      font-size: 11px; color: var(--text-muted); line-height: 1.55;
+    }
+    .sms-consent-label a { color: var(--primary); text-decoration: underline; }
+
+    /* ── Marketing attribution ── */
+    .marketing-credit {
+      font-size: 10px; color: #aaa;
+      text-align: center; margin-top: 6px;
+      line-height: 1.5; padding: 0 8px;
+    }
+    .marketing-credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+    .marketing-credit a:hover { color: var(--primary); }
+
+    /* ── Util ── */
+    .text-center { text-align: center; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       LANDER SCREEN — step 0, full viewport dark hero
+  ============================================================ -->
+  <div id="lander-screen" class="lander-screen">
+
+    <!-- Lander topbar with logo -->
+    <div class="lander-topbar">
+      <div id="lander-logo"></div>
+      <div class="rating-badge" aria-label="Five-star rated on Google">
+        <span class="rating-badge-stars" aria-hidden="true">★★★★★</span>
+        <span class="rating-badge-label">Rated on Google</span>
+      </div>
+    </div>
+
+    <!-- Lander content -->
+    <div class="lander-body">
+      <div class="lander-badge" id="lander-badge"></div>
+      <h1 class="lander-headline" id="lander-headline"></h1>
+      <p  class="lander-sub"      id="lander-sub"></p>
+
+      <!-- Crew photo -->
+      <div class="crew-photo-wrap" id="crew-photo-wrap"></div>
+
+      <!-- Bullet trust points -->
+      <div class="lander-bullets" id="lander-bullets"></div>
+
+      <!-- CTA button -->
+      <button class="lander-cta" id="lander-cta"></button>
+      <p class="lander-trust" id="lander-trust"></p>
+    </div>
+
+  </div>
+
+  <!-- Type B funnel proof: visitors can explore before starting the quiz -->
+  <div class="proof-sections" id="proof-sections">
+    <section class="proof-section" aria-labelledby="gallery-title">
+      <div class="proof-inner">
+        <div class="section-heading">
+          <p class="section-eyebrow" id="gallery-eyebrow"></p>
+          <h2 class="section-title" id="gallery-title"></h2>
+          <p class="section-copy" id="gallery-copy"></p>
+        </div>
+        <div class="gallery-carousel" id="gallery-carousel" aria-roledescription="carousel" aria-label="A & W Fencing options">
+          <div class="gallery-viewport" id="gallery-viewport">
+            <div class="gallery-track" id="gallery-track"></div>
+          </div>
+          <button class="gallery-arrow prev" id="gallery-prev" type="button" aria-label="Show previous project"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+          <button class="gallery-arrow next" id="gallery-next" type="button" aria-label="Show next project"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+          <div class="gallery-footer">
+            <div class="gallery-dots" id="gallery-dots" aria-label="Choose a project"></div>
+            <span class="gallery-count" id="gallery-count" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="proof-section alt" aria-labelledby="reviews-title">
+      <div class="proof-inner">
+        <div class="section-heading">
+          <p class="section-eyebrow" id="reviews-eyebrow"></p>
+          <h2 class="section-title" id="reviews-title"></h2>
+          <p class="section-copy" id="reviews-copy"></p>
+        </div>
+        <div class="google-summary" aria-label="Customer feedback on Google">
+          <span class="google-mark" aria-hidden="true">G</span>
+          <div><div class="google-stars" aria-hidden="true">★★★★★</div><div class="google-label" id="google-review-summary"></div></div>
+        </div>
+        <div class="review-highlights" id="review-highlights"></div>
+      </div>
+    </section>
+
+    <section class="bottom-proof-cta">
+      <div class="proof-inner">
+        <h2>Ready to Plan Your Project?</h2>
+        <p>Answer five quick questions and request a free, no-obligation estimate.</p>
+        <button class="bottom-cta" id="bottom-cta">Get My Free Estimate →</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       QUIZ CHROME — topbar + progress bar, hidden on lander
+  ============================================================ -->
+  <div class="quiz-chrome" id="quiz-chrome">
+    <header class="topbar">
+      <div class="logo-wrap" id="quiz-logo"></div>
+      <div class="rating-badge" aria-label="Five-star rated on Google">
+        <span class="rating-badge-stars" aria-hidden="true">★★★★★</span>
+        <span class="rating-badge-label">Rated on Google</span>
+      </div>
+    </header>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       QUIZ FUNNEL — questions, form, thank you
+  ============================================================ -->
+  <main class="funnel-wrap hidden" id="funnel-wrap">
+    <div id="screen-container"></div>
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer id="footer">
+    <div class="footer-links" id="footer-links"></div>
+    <div class="footer-copy"  id="footer-copy"></div>
+    <p class="marketing-credit">Marketing by <a href="https://houzflow.com">Houzflow</a></p>
+  </footer>
+
+  <!-- ============================================================
+       MAIN SCRIPT
+  ============================================================ -->
+  <script>
+  (function () {
+
+    if (!window.CONFIG) return;
+
+    const C = window.CONFIG;
+    const funnelVariant = document.documentElement.dataset.funnelVariant || 'b';
+
+    // ── 1. Apply CSS variables ───────────────────────────────
+    const R = document.documentElement.style;
+    R.setProperty('--primary',       C.colors.primary);
+    R.setProperty('--primary-dark',  C.colors.primaryDark);
+    R.setProperty('--primary-light', C.colors.primaryLight);
+    R.setProperty('--bg',            C.colors.bg);
+    R.setProperty('--surface',       C.colors.surface);
+    R.setProperty('--text',          C.colors.text);
+    R.setProperty('--text-muted',    C.colors.textMuted);
+    R.setProperty('--border',        C.colors.border);
+    R.setProperty('--success',       C.colors.success);
+    R.setProperty('--lander-from',   C.colors.landerGradFrom);
+    R.setProperty('--lander-to',     C.colors.landerGradTo);
+    R.setProperty('--heading-font',  `'${C.headingFont}', sans-serif`);
+    R.setProperty('--body-font',     `'${C.bodyFont}', sans-serif`);
+
+    // ── 2. Google Fonts ──────────────────────────────────────
+    document.getElementById('gfonts').href =
+      `https://fonts.googleapis.com/css2?family=${encodeURIComponent(C.headingFont)}:wght@400;600;700;800&family=${encodeURIComponent(C.bodyFont)}:wght@400;500;600&display=swap`;
+
+    // ── 2a. Clarity ──────────────────────────────────────────
+    if (C.clarityId && C.clarityId !== 'YOUR_CLARITY_ID') {
+      window._clarityTag.src = `https://www.clarity.ms/tag/${C.clarityId}`;
+      if (window.clarity) window.clarity('set', 'funnelName', C.businessName);
+      if (window.clarity) window.clarity('set', 'funnelVariant', funnelVariant.toUpperCase());
+    } else {
+      console.warn('⚠️ Clarity project ID not set in CONFIG.clarityId');
+    }
+
+    // ── 2b. Meta Pixel ───────────────────────────────────────
+    if (C.metaPixelId && C.metaPixelId !== 'YOUR_META_PIXEL_ID') {
+      window._metaTag.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      fbq('init', C.metaPixelId);
+      fbq('track', 'PageView');
+      const ns = document.createElement('noscript');
+      ns.innerHTML = `<img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=${C.metaPixelId}&ev=PageView&noscript=1"/>`;
+      document.body.appendChild(ns);
+    } else {
+      console.warn('⚠️ Meta Pixel ID not set in CONFIG.metaPixelId');
+    }
+
+    // ── 3. Page title ────────────────────────────────────────
+    document.title = `${C.businessName} - Free Fence Estimate`;
+
+    // ── 4. Logo helper ───────────────────────────────────────
+    function logoHTML(dark = false) {
+      if (C.logoUrl) {
+        return `<img src="${C.logoUrl}" alt="${C.logoAlt}" class="${dark ? 'lander-logo-img' : 'logo-img'}" />`;
+      }
+      const initials = C.businessName.split(/\s+/).filter(word => /^[A-Za-z]/.test(word)).map(word => word[0]).join('').slice(0, 2).toUpperCase();
+      return `
+        <div class="${dark ? 'lander-logo-icon' : 'logo-icon'}">${initials}</div>
+        <div>
+          <div class="${dark ? 'lander-logo-text' : 'logo-text'}">${C.businessName}</div>
+          <div class="${dark ? 'lander-logo-sub' : 'logo-sub'}">${C.tagline}</div>
+        </div>`;
+    }
+
+    // ── 5. Build lander ──────────────────────────────────────
+    const L = C.lander;
+
+    document.getElementById('lander-logo').innerHTML   = logoHTML(true);
+    document.getElementById('lander-badge').textContent = L.badge;
+    document.getElementById('lander-headline').innerHTML =
+      L.headline.replace(/(Free)/g, '<span>$1</span>'); // highlight "Free"
+    document.getElementById('lander-sub').textContent   = L.subheadline;
+    document.getElementById('lander-cta').textContent   = L.ctaLabel;
+    document.getElementById('lander-trust').textContent = L.trustNote;
+
+    // Type B gallery and review proof
+    const G = C.gallery;
+    document.getElementById('gallery-eyebrow').textContent = G.eyebrow;
+    document.getElementById('gallery-title').textContent = G.headline;
+    document.getElementById('gallery-copy').textContent = G.subheadline;
+    const galleryTrack = document.getElementById('gallery-track');
+    const galleryDots = document.getElementById('gallery-dots');
+    const galleryCount = document.getElementById('gallery-count');
+    const galleryCarousel = document.getElementById('gallery-carousel');
+    const galleryViewport = document.getElementById('gallery-viewport');
+    let galleryIndex = 0;
+    let galleryTimer;
+    let galleryPointerStart = null;
+
+    galleryTrack.innerHTML = G.items.map((item, index) => `
+      <article class="gallery-card" role="group" aria-roledescription="slide" aria-label="${index + 1} of ${G.items.length}">
+        <img src="${item.image}" alt="${item.alt}" loading="lazy" />
+        <h3 class="gallery-label">${item.title}<span class="gallery-location">${item.location}</span></h3>
+      </article>`).join('');
+    galleryDots.innerHTML = G.items.map((item, index) =>
+      `<button class="gallery-dot" type="button" aria-label="Show ${item.title}" data-gallery-index="${index}"></button>`
+    ).join('');
+
+    function showGalleryItem(nextIndex, userInitiated = false) {
+      galleryIndex = (nextIndex + G.items.length) % G.items.length;
+      galleryTrack.style.transform = `translateX(-${galleryIndex * 100}%)`;
+      galleryCount.textContent = `${galleryIndex + 1} / ${G.items.length}`;
+      galleryDots.querySelectorAll('.gallery-dot').forEach((dot, index) => {
+        dot.setAttribute('aria-current', index === galleryIndex ? 'true' : 'false');
+      });
+      if (userInitiated) restartGalleryTimer();
+    }
+
+    function stopGalleryTimer() {
+      window.clearInterval(galleryTimer);
+    }
+
+    function startGalleryTimer() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || G.items.length < 2) return;
+      stopGalleryTimer();
+      galleryTimer = window.setInterval(() => showGalleryItem(galleryIndex + 1), 5500);
+    }
+
+    function restartGalleryTimer() {
+      stopGalleryTimer();
+      startGalleryTimer();
+    }
+
+    document.getElementById('gallery-prev').addEventListener('click', () => showGalleryItem(galleryIndex - 1, true));
+    document.getElementById('gallery-next').addEventListener('click', () => showGalleryItem(galleryIndex + 1, true));
+    galleryDots.addEventListener('click', event => {
+      const dot = event.target.closest('[data-gallery-index]');
+      if (dot) showGalleryItem(Number(dot.dataset.galleryIndex), true);
+    });
+    galleryCarousel.addEventListener('mouseenter', stopGalleryTimer);
+    galleryCarousel.addEventListener('mouseleave', startGalleryTimer);
+    galleryCarousel.addEventListener('focusin', stopGalleryTimer);
+    galleryCarousel.addEventListener('focusout', event => {
+      if (!galleryCarousel.contains(event.relatedTarget)) startGalleryTimer();
+    });
+    galleryViewport.addEventListener('pointerdown', event => { galleryPointerStart = event.clientX; });
+    galleryViewport.addEventListener('pointerup', event => {
+      if (galleryPointerStart === null) return;
+      const distance = event.clientX - galleryPointerStart;
+      galleryPointerStart = null;
+      if (Math.abs(distance) > 45) showGalleryItem(galleryIndex + (distance < 0 ? 1 : -1), true);
+    });
+    galleryViewport.addEventListener('pointercancel', () => { galleryPointerStart = null; });
+    document.addEventListener('visibilitychange', () => document.hidden ? stopGalleryTimer() : startGalleryTimer());
+    showGalleryItem(0);
+    startGalleryTimer();
+
+    const V = C.reviews;
+    const reviewsSection = document.querySelector('.proof-section[aria-labelledby="reviews-title"]');
+    if (V.enabled === false) {
+      reviewsSection.hidden = true;
+    } else {
+      document.getElementById('reviews-eyebrow').textContent = V.eyebrow;
+      document.getElementById('reviews-title').textContent = V.headline;
+      document.getElementById('reviews-copy').textContent = V.subheadline;
+      document.getElementById('google-review-summary').textContent = `${V.rating} · ${V.reviewCount} reviews`;
+      document.getElementById('review-highlights').innerHTML = V.items.map(item => `
+        <article class="review-card">
+          <div class="review-author">
+            <div class="review-avatar" aria-hidden="true">${item.initials}</div>
+            <div><h3>${item.name}</h3><div class="review-contributor">${item.contributor}</div></div>
+          </div>
+          <div class="review-rating"><span class="stars" aria-label="5 out of 5 stars">★★★★★</span><span class="review-date">${item.date}</span></div>
+          <p>${item.text}</p>
+        </article>`).join('');
+    }
+    renderIcons(document.getElementById('proof-sections'));
+
+    // Crew photo or placeholder
+    const photoWrap = document.getElementById('crew-photo-wrap');
+    if (L.crewImageUrl) {
+      photoWrap.innerHTML =
+        `<img src="${L.crewImageUrl}" alt="${L.crewImageAlt}" class="crew-photo" loading="eager" />`;
+    } else {
+      photoWrap.innerHTML = `
+        <div class="crew-photo-placeholder">
+          <div class="placeholder-icon">👷</div>
+          <div>Add your crew photo in CONFIG.lander.crewImageUrl</div>
+        </div>`;
+    }
+
+    // Bullets
+    const bulletsEl = document.getElementById('lander-bullets');
+    L.bulletPoints.forEach(b => {
+      bulletsEl.innerHTML += `<div class="lander-bullet">${b}</div>`;
+    });
+
+    // CTA → start quiz
+    document.getElementById('lander-cta').addEventListener('click', startQuiz);
+    document.getElementById('bottom-cta').addEventListener('click', startQuiz);
+
+    // ── 6. Quiz logo ─────────────────────────────────────────
+    document.getElementById('quiz-logo').innerHTML = logoHTML(false);
+
+    // ── 7. Footer ────────────────────────────────────────────
+    const fl = document.getElementById('footer-links');
+    C.footerLinks.forEach(l => {
+      fl.innerHTML += `<a href="${l.href}">${l.label}</a>`;
+    });
+    document.getElementById('footer-copy').textContent =
+      `© ${new Date().getFullYear()} ${C.businessName}. All rights reserved.`;
+
+    // ── 7a. Attribution capture ───────────────────────────────
+    // Captures UTM params, fbclid, _fbp/_fbc cookies, user agent, and a
+    // unique lead_event_id on page load — stored in sessionStorage for use
+    // on form submit (hidden fields + CAPI deduplication eventID).
+    (function captureAttribution() {
+      function getParam(name) {
+        return new URLSearchParams(window.location.search).get(name) || '';
+      }
+      function getCookie(name) {
+        const v = `; ${document.cookie}`;
+        const parts = v.split(`; ${name}=`);
+        return parts.length === 2 ? parts.pop().split(';').shift() : '';
+      }
+      function genEventId() {
+        return 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      }
+      const fbclid = getParam('fbclid');
+      const data = {
+        utm_source:    getParam('utm_source'),
+        utm_medium:    getParam('utm_medium'),
+        utm_campaign:  getParam('utm_campaign'),
+        utm_content:   getParam('utm_content'),
+        utm_term:      getParam('utm_term'),
+        ad_id:         getParam('ad_id'),
+        adset_id:      getParam('adset_id'),
+        campaign_id:   getParam('campaign_id'),
+        fbclid:        fbclid,
+        fbp:           getCookie('_fbp'),
+        fbc:           getCookie('_fbc') || (fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : ''),
+        source_url:    window.location.href,
+        user_agent:    navigator.userAgent,
+        lead_event_id: genEventId(),
+      };
+      sessionStorage.setItem('attribution_data', JSON.stringify(data));
+      // First-touch: persist only once per browser
+      if (!localStorage.getItem('first_touch_data')) {
+        localStorage.setItem('first_touch_data', JSON.stringify({
+          source:    data.utm_source,
+          campaign:  data.utm_campaign,
+          ad_id:     data.ad_id,
+          timestamp: Date.now(),
+        }));
+      }
+    })();
+
+    // ── 8. State ─────────────────────────────────────────────
+    // step 0 = lander, 1..N = questions, N+1 = form, N+2 = thank you
+    let currentStep = 0;
+    const totalQuestions = C.questions.length;
+    const FORM_STEP   = totalQuestions + 1;
+    const THANKS_STEP = totalQuestions + 2;
+    const answers     = {};
+    const trackedClaritySteps = new Set();
+
+    // ── 8a. Hash map ─────────────────────────────────────────
+    function stepToHash(step) {
+      if (step === 0)              return '#start';
+      if (step <= totalQuestions)  return `#step-${step}-${C.questions[step-1].id}`;
+      if (step === FORM_STEP)      return '#contact';
+      if (step === THANKS_STEP)    return '#thank-you';
+      return '#start';
+    }
+    function hashToStep(hash) {
+      if (!hash || hash === '#start') return 0;
+      if (hash === '#contact')        return FORM_STEP;
+      if (hash === '#thank-you')      return THANKS_STEP;
+      const m = hash.match(/^#step-(\d+)-/);
+      if (m) return parseInt(m[1], 10);
+      return 0;
+    }
+
+    // ── 8b. Per-step tracking ─────────────────────────────────
+    function trackStep(step) {
+      const label = stepToHash(step).replace('#', '');
+      const clarityEventName = `quiz_${label.replace(/-/g, '_')}`;
+
+      // Keep the current step as a recording filter and emit one funnel event
+      // per screen. The Set prevents browser-back navigation from double firing.
+      if (window.clarity) {
+        window.clarity('set', 'funnelStep', label);
+        if (!trackedClaritySteps.has(clarityEventName)) {
+          window.clarity('event', clarityEventName);
+          trackedClaritySteps.add(clarityEventName);
+        }
+      }
+      // FunnelStep custom pixel event (non-standard, safe to fire on every step)
+      // Note: fbq('track', 'Lead') is fired in handleSubmit with a deduplication
+      // eventID so it is intentionally NOT fired here on THANKS_STEP.
+      if (window.fbq) {
+        fbq('trackCustom', 'FunnelStep', { step: label, variant: funnelVariant.toUpperCase() });
+      }
+    }
+
+    // ── 9. Transition: lander → quiz ─────────────────────────
+    function startQuiz() {
+      // Hide lander, show quiz chrome + funnel
+      document.getElementById('lander-screen').classList.add('hidden');
+      document.getElementById('proof-sections').classList.add('hidden');
+      document.getElementById('quiz-chrome').classList.add('visible');
+      document.getElementById('funnel-wrap').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      currentStep = 1;
+      renderStep(1);
+    }
+
+    // ── 10. Progress bar ─────────────────────────────────────
+    function setProgress(pct) {
+      document.getElementById('progress-fill').style.width = pct + '%';
+    }
+
+    // ── 11. Screen container ──────────────────────────────────
+    const container = document.getElementById('screen-container');
+
+    function _render(step) {
+      const existing = container.querySelector('.screen');
+      if (existing) {
+        existing.classList.add('exit');
+        setTimeout(() => existing.remove(), 180);
+      }
+      setTimeout(() => {
+        if (step === 0) {
+          // Back to lander
+          document.getElementById('lander-screen').classList.remove('hidden');
+          document.getElementById('proof-sections').classList.remove('hidden');
+          document.getElementById('quiz-chrome').classList.remove('visible');
+          document.getElementById('funnel-wrap').classList.add('hidden');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        if (step <= totalQuestions) renderQuestion(step - 1);
+        else if (step === FORM_STEP)  renderForm();
+        else if (step === THANKS_STEP) renderThanks();
+
+        // Progress
+        if (step <= totalQuestions) setProgress(10 + ((step / totalQuestions) * 75));
+        else if (step === FORM_STEP)  setProgress(92);
+        else                          setProgress(100);
+
+        trackStep(step);
+      }, existing ? 200 : 0);
+    }
+
+    function renderStep(step) {
+      currentStep = step;
+      const hash = stepToHash(step);
+      if (window.location.hash !== hash) {
+        window.location.hash = hash;
+      } else {
+        _render(step);
+      }
+    }
+
+    // Hash change — browser back button
+    window.addEventListener('hashchange', () => {
+      const step = hashToStep(window.location.hash);
+      if (step <= currentStep) {
+        currentStep = step;
+        _render(step);
+      } else {
+        window.location.hash = stepToHash(currentStep);
+      }
+    });
+
+    // ── QUESTION SCREEN ───────────────────────────────────────
+    function renderQuestion(qIndex) {
+      const q = C.questions[qIndex];
+      const div = document.createElement('div');
+      div.className = 'screen';
+      div.innerHTML = `
+        <p class="q-progress-label">${q.progress}</p>
+        <h2 class="q-headline">${q.question}</h2>
+        ${renderOptionsHTML(q)}
+        <button class="back-btn" id="back-btn">← Back</button>
+      `;
+      container.appendChild(div);
+      renderIcons(div);
+      attachOptionEvents(div, q, () => {
+        currentStep++;
+        renderStep(currentStep);
+      });
+      div.querySelector('#back-btn').addEventListener('click', () => {
+        currentStep--;
+        renderStep(currentStep);
+      });
+    }
+
+    function renderOptionsHTML(q) {
+      if (q.type === 'image-grid') {
+        const cards = q.options.map(o => `
+          <div class="option-card" data-value="${o.label}">
+            ${o.image
+              ? `<img src="${o.image}" alt="${o.label}" class="option-card-img" loading="lazy" />`
+              : `<div class="option-card-img-placeholder"><i data-lucide="${o.icon || 'image'}"></i></div>`}
+            <div class="option-card-label">
+              <i data-lucide="${o.icon || 'circle'}" aria-hidden="true"></i>
+              <span>${o.label}</span>
+            </div>
+          </div>`).join('');
+        return `<div class="options-grid">${cards}</div>`;
+      }
+      const btns = q.options.map(o => `
+        <button class="option-btn" data-value="${o.label}">
+          <span class="option-icon" aria-hidden="true"><i data-lucide="${o.icon || 'circle'}"></i></span>
+          <span class="btn-label">${o.label}</span>
+        </button>`).join('');
+      return `<div class="options-list">${btns}</div>`;
+    }
+
+    function renderIcons(root) {
+      if (window.lucide) {
+        window.lucide.createIcons({ root });
+      }
+    }
+
+    function attachOptionEvents(wrapper, q, onSelect) {
+      const els = wrapper.querySelectorAll('.option-card, .option-btn');
+      els.forEach(el => {
+        el.addEventListener('click', () => {
+          els.forEach(e => e.classList.remove('selected'));
+          el.classList.add('selected');
+          answers[q.id] = el.dataset.value;
+          setTimeout(onSelect, 260);
+        });
+      });
+    }
+
+    // ── FORM SCREEN ───────────────────────────────────────────
+    function renderForm() {
+      const f = C.form;
+      const fieldIcons = { text: '👤', email: '✉️', tel: '📱' };
+
+      const fieldsHTML = f.fields.map(field => `
+        <div class="form-field">
+          <span class="field-icon">${fieldIcons[field.type] || '📝'}</span>
+          <input
+            class="form-input"
+            type="${field.type}"
+            name="${field.name}"
+            placeholder="${field.placeholder}"
+            ${field.required ? 'required' : ''}
+            autocomplete="${field.name === 'name' ? 'name' : field.name === 'email' ? 'email' : 'tel'}"
+          />
+        </div>`).join('');
+
+      // SMS consent text (replace {businessName} token)
+      const smsText = (C.smsConsentText || 'I agree to receive SMS messages. Reply STOP to unsubscribe.')
+        .replace('{businessName}', C.businessName);
+
+      const privacyHref = (C.footerLinks.find(l => l.label === 'Privacy Policy') || { href: '#' }).href;
+      const termsHref   = (C.footerLinks.find(l => l.label === 'Terms of Use')   || { href: '#' }).href;
+
+      const div = document.createElement('div');
+      div.className = 'screen';
+      div.innerHTML = `
+        <p class="form-eyebrow text-center">${f.eyebrow}</p>
+        <h2 class="form-headline text-center">${f.headline}</h2>
+        <p class="form-sub text-center">${f.subtext}</p>
+        ${fieldsHTML}
+        <!-- ZIP CODE FIELD -->
+        <div class="form-field zip-field">
+          <span class="field-icon">📍</span>
+          <input
+            class="form-input"
+            type="text"
+            name="zip"
+            id="zip-input"
+            placeholder="${f.zipPlaceholder}"
+            inputmode="numeric"
+            maxlength="10"
+            required
+            autocomplete="postal-code"
+          />
+        </div>
+
+        <!-- HIDDEN ATTRIBUTION FIELDS (populated from sessionStorage on submit) -->
+        <input type="hidden" name="utm_source"    id="h_utm_source">
+        <input type="hidden" name="utm_medium"    id="h_utm_medium">
+        <input type="hidden" name="utm_campaign"  id="h_utm_campaign">
+        <input type="hidden" name="utm_content"   id="h_utm_content">
+        <input type="hidden" name="utm_term"      id="h_utm_term">
+        <input type="hidden" name="ad_id"         id="h_ad_id">
+        <input type="hidden" name="adset_id"      id="h_adset_id">
+        <input type="hidden" name="campaign_id"   id="h_campaign_id">
+        <input type="hidden" name="fbclid"        id="h_fbclid">
+        <input type="hidden" name="fbp"           id="h_fbp">
+        <input type="hidden" name="fbc"           id="h_fbc">
+        <input type="hidden" name="source_url"    id="h_source_url">
+        <input type="hidden" name="user_agent"    id="h_user_agent">
+        <input type="hidden" name="lead_event_id" id="h_lead_event_id">
+
+        <!-- A2P SMS OPT-IN CHECKBOX (required for 10DLC compliance) -->
+        <div class="sms-consent-wrap">
+          <input type="checkbox" id="sms-consent" name="sms_consent" required>
+          <label class="sms-consent-label" for="sms-consent">
+            ${smsText}
+            See our <a href="${privacyHref}">Privacy Policy</a>
+            and <a href="${termsHref}">Terms of Use</a>.
+          </label>
+        </div>
+
+        <p class="submission-error" id="submission-error" role="alert" aria-live="polite"></p>
+
+        <button class="btn-primary" id="submit-btn">
+          <span id="btn-label">${f.ctaLabel}</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+        <p class="privacy-note">🔒 ${f.privacyText}</p>
+        <button class="back-btn" id="back-btn">← Back</button>
+      `;
+      container.appendChild(div);
+
+      div.querySelector('#back-btn').addEventListener('click', () => {
+        currentStep--;
+        renderStep(currentStep);
+      });
+      div.querySelector('#submit-btn').addEventListener('click', () => handleSubmit(div));
+    }
+
+    async function handleSubmit(formDiv) {
+      // Validate all required fields including zip
+      const inputs = formDiv.querySelectorAll('.form-input[required]');
+      let valid = true;
+      inputs.forEach(inp => {
+        if (!inp.value.trim()) {
+          inp.style.borderColor = '#EF4444';
+          inp.addEventListener('input', () => inp.style.borderColor = '', { once: true });
+          valid = false;
+        }
+      });
+      // Validate SMS consent checkbox
+      const smsCheck = formDiv.querySelector('#sms-consent');
+      if (smsCheck && !smsCheck.checked) {
+        smsCheck.style.outline = '2px solid #EF4444';
+        smsCheck.addEventListener('change', () => smsCheck.style.outline = '', { once: true });
+        valid = false;
+      }
+      if (!valid) return;
+
+      const btn   = formDiv.querySelector('#submit-btn');
+      const label = formDiv.querySelector('#btn-label');
+      const spin  = formDiv.querySelector('#spinner');
+      const errorMessage = formDiv.querySelector('#submission-error');
+      errorMessage.textContent = '';
+      btn.disabled = true;
+      label.textContent = 'Sending…';
+      spin.style.display = 'block';
+
+      // Collect visible field values (name, email, phone, zip)
+      const formData = {};
+      inputs.forEach(inp => { formData[inp.name] = inp.value.trim(); });
+
+      // ── Populate hidden attribution fields ─────────────────
+      const attribution = JSON.parse(sessionStorage.getItem('attribution_data') || '{}');
+      const hiddenMap = {
+        h_utm_source:    attribution.utm_source    || '',
+        h_utm_medium:    attribution.utm_medium    || '',
+        h_utm_campaign:  attribution.utm_campaign  || '',
+        h_utm_content:   attribution.utm_content   || '',
+        h_utm_term:      attribution.utm_term      || '',
+        h_ad_id:         attribution.ad_id         || '',
+        h_adset_id:      attribution.adset_id      || '',
+        h_campaign_id:   attribution.campaign_id   || '',
+        h_fbclid:        attribution.fbclid        || '',
+        h_fbp:           attribution.fbp           || '',
+        h_fbc:           attribution.fbc           || '',
+        h_source_url:    attribution.source_url    || '',
+        h_user_agent:    attribution.user_agent    || '',
+        h_lead_event_id: attribution.lead_event_id || '',
+      };
+      Object.entries(hiddenMap).forEach(([id, val]) => {
+        const el = formDiv.querySelector('#' + id);
+        if (el) el.value = val;
+      });
+
+      // ── Build enriched webhook payload ─────────────────────
+      const payload = {
+        business:     C.businessName,
+        funnel_variant: funnelVariant.toUpperCase(),
+        submitted_at: new Date().toISOString(),
+        contact:      formData,   // includes zip
+        quiz_answers: answers,
+        quiz_profile: C.leadProfile || undefined,
+        attribution: {
+          utm_source:    attribution.utm_source    || '',
+          utm_medium:    attribution.utm_medium    || '',
+          utm_campaign:  attribution.utm_campaign  || '',
+          utm_content:   attribution.utm_content   || '',
+          utm_term:      attribution.utm_term      || '',
+          ad_id:         attribution.ad_id         || '',
+          adset_id:      attribution.adset_id      || '',
+          campaign_id:   attribution.campaign_id   || '',
+          fbclid:        attribution.fbclid        || '',
+          fbp:           attribution.fbp           || '',
+          fbc:           attribution.fbc           || '',
+          source_url:    attribution.source_url    || window.location.href,
+          user_agent:    attribution.user_agent    || navigator.userAgent,
+          lead_event_id: attribution.lead_event_id || '',
+        },
+        sms_consent: smsCheck ? smsCheck.checked : false,
+      };
+
+      if (!C.leadRouterUrl) {
+        errorMessage.textContent = `Online calling is being configured. Please call ${C.businessName} directly for now.`;
+        btn.disabled = false;
+        label.textContent = f.ctaLabel;
+        spin.style.display = 'none';
+        return;
+      }
+
+      try {
+        const routerResponse = await fetch(C.leadRouterUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const routerResult = await routerResponse.json().catch(() => ({}));
+        if (!routerResponse.ok) throw new Error(routerResult.error || 'The call could not be started.');
+      } catch (error) {
+        errorMessage.textContent = error.message || `The call could not be started. Please call ${C.businessName} directly.`;
+        btn.disabled = false;
+        label.textContent = f.ctaLabel;
+        spin.style.display = 'none';
+        return;
+      }
+
+      // Fire the conversion only after the lead router accepts the request.
+      if (typeof fbq !== 'undefined' && attribution.lead_event_id) {
+        fbq('track', 'Lead', {}, { eventID: attribution.lead_event_id });
+      }
+
+      if (C.webhookUrl) {
+        try {
+          await fetch(C.webhookUrl, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(payload),
+            mode:    'no-cors',
+          });
+        } catch (e) {
+          console.warn('Webhook error:', e);
+        }
+      } else {
+        console.warn('Webhook URL is not configured; submission was not sent.');
+      }
+
+      currentStep = THANKS_STEP;
+      renderStep(currentStep);
+    }
+
+    // ── THANK YOU SCREEN ──────────────────────────────────────
+    function renderThanks() {
+      const t = C.thankYou;
+      const phoneHref = `tel:${C.phone.replace(/[\s\(\)\-]/g, '')}`;
+      const div = document.createElement('div');
+      div.className = 'screen';
+      div.innerHTML = `
+        <div class="thankyou-wrap">
+          <div class="thankyou-icon">✅</div>
+          <h2 class="thankyou-headline">${t.headline}</h2>
+          <p class="thankyou-body">${t.body}</p>
+          <div class="thankyou-divider"></div>
+          <p class="call-prompt">${t.callPrompt}</p>
+          <a href="${phoneHref}" class="btn-call">📞 ${t.callLabel}</a>
+          <p class="hours-note">${C.businessHours}</p>
+        </div>
+      `;
+      container.appendChild(div);
+      document.getElementById('progress-fill').parentElement.style.display = 'none';
+    }
+
+    // ── 12. Boot ─────────────────────────────────────────────
+    // Always start on lander — quiz is launched via CTA button
+    // Record the assigned A/B path first, followed by the landing screen.
+    // These queued calls are safe while the async Clarity script is loading.
+    if (window.clarity) {
+      window.clarity('event', `quiz_path_${funnelVariant}`);
+      window.clarity('set', 'funnelStep', 'start');
+      window.clarity('event', 'quiz_start');
+      trackedClaritySteps.add('quiz_start');
+    }
+
+    window.location.hash = '#start';
+
+  })();
+  </script>
+
+  <!--
+  ================================================================
+  ⚠️  PRE-LAUNCH CHECKLIST — values that MUST be replaced
+  ================================================================
+  In config.js:
+    metaPixelId     → your 15–16 digit Meta Pixel ID
+    clarityId       → your Microsoft Clarity project ID
+    webhookUrl      → your real Make / Zapier / GHL webhook URL
+    businessName    → client business name
+    phone           → client phone number
+    colors          → client brand colours
+    lander.crewImageUrl → real crew photo URL
+    footerLinks     → real /privacy and /terms URLs
+
+  In GHL (manual steps — see handoff doc):
+    Create 24 attribution custom fields
+    Create 3 CAPI workflows (Lead / Schedule / Purchase)
+    Map attribution.* webhook fields to GHL custom fields
+    Remove test_event_code from workflows before going live
+  ================================================================
+  -->
+
+</body>
+</html>
