@@ -20,9 +20,13 @@ for (const needle of ["a_w_fencing", "+1 (704) 771-1901", "fence_type"]) {
   if (!config.includes(needle)) throw new Error(`Missing config value: ${needle}`);
 }
 
-const assetMatches = [...config.matchAll(/(?:image|logo|crewImage)\w*:\s*["'](\/assets\/[^"']+)["']/gi)];
+const assetMatches = [...config.matchAll(/\$\{A_W_ASSET_BASE\}([^`"]+)/g)];
 for (const [, assetPath] of assetMatches) {
-  await stat(fileURLToPath(new URL(assetPath.replace(/^\//, ""), publicDir)));
+  await stat(fileURLToPath(new URL(`assets/${assetPath}`, publicDir)));
+}
+
+if (!index.includes('document.write(\'<script src="./config.js">')) {
+  throw new Error("Missing nested VS Code preview config fallback.");
 }
 
 await stat(new URL("a/index.html", distDir));

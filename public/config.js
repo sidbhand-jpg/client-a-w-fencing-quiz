@@ -1,10 +1,14 @@
 // A & W FENCING QUIZ FUNNEL - CONFIG
+// Resolve images from this file so production routes and nested VS Code
+// Live Preview URLs use the same assets without path-specific configuration.
+const A_W_ASSET_BASE = new URL("./assets/", document.currentScript.src).href;
+
 window.CONFIG = {
   businessName: "A & W Fencing",
   tagline: "Professional Fencing for Lake Norman",
   phone: "+1 (704) 771-1901",
   businessHours: "Call to schedule your free estimate",
-  logoUrl: "/assets/logo.png",
+  logoUrl: `${A_W_ASSET_BASE}logo.png`,
   logoAlt: "A & W Fencing logo",
 
   colors: {
@@ -33,7 +37,7 @@ window.CONFIG = {
       "Serving Lake Norman and surrounding counties"
     ],
     ctaLabel: "Get My Free Estimate",
-    crewImageUrl: "/assets/fencing-hero.jpg",
+    crewImageUrl: `${A_W_ASSET_BASE}fencing-hero.jpg`,
     crewImageAlt: "Wood privacy fence beside a landscaped home",
     trustNote: "Straightforward planning. Professional installation."
   },
@@ -43,12 +47,12 @@ window.CONFIG = {
     headline: "Find the Right Fit for Your Property",
     subheadline: "Explore the fencing styles and project types offered by A & W Fencing.",
     items: [
-      { title: "Wood Privacy Fencing", location: "Residential", image: "/assets/projects/wood-fence.jpg", alt: "Wood privacy fence along a green lawn" },
-      { title: "Vinyl & PVC Fencing", location: "Low maintenance", image: "/assets/projects/vinyl-fence.jpg", alt: "Vinyl fence along a landscaped yard" },
-      { title: "Aluminum Fencing", location: "Pool & property safety", image: "/assets/projects/aluminum-fence.jpg", alt: "Black aluminum fence beside a lawn" },
-      { title: "Ornamental Gates", location: "Access & curb appeal", image: "/assets/projects/ornamental-gate.jpg", alt: "Decorative metal driveway gate" },
-      { title: "Farm & Agricultural", location: "Land & livestock", image: "/assets/projects/farm-fence.jpg", alt: "Farm-style fence around an open green space" },
-      { title: "Chain-Link Fencing", location: "Residential & commercial", image: "/assets/projects/chain-link-fence.jpg", alt: "Chain-link fence installation" }
+      { title: "Wood Privacy Fencing", location: "Residential", image: `${A_W_ASSET_BASE}projects/wood-fence.jpg`, alt: "Wood privacy fence along a green lawn" },
+      { title: "Vinyl & PVC Fencing", location: "Low maintenance", image: `${A_W_ASSET_BASE}projects/vinyl-fence.jpg`, alt: "Vinyl fence along a landscaped yard" },
+      { title: "Aluminum Fencing", location: "Pool & property safety", image: `${A_W_ASSET_BASE}projects/aluminum-fence.jpg`, alt: "Black aluminum fence beside a lawn" },
+      { title: "Ornamental Gates", location: "Access & curb appeal", image: `${A_W_ASSET_BASE}projects/ornamental-gate.jpg`, alt: "Decorative metal driveway gate" },
+      { title: "Farm & Agricultural", location: "Land & livestock", image: `${A_W_ASSET_BASE}projects/farm-fence.jpg`, alt: "Farm-style fence around an open green space" },
+      { title: "Chain-Link Fencing", location: "Residential & commercial", image: `${A_W_ASSET_BASE}projects/chain-link-fence.jpg`, alt: "Chain-link fence installation" }
     ]
   },
 
@@ -70,10 +74,10 @@ window.CONFIG = {
       question: "What type of fencing project do you need?",
       type: "image-grid",
       options: [
-        { label: "Wood privacy fence", icon: "hammer", image: "/assets/projects/wood-fence.jpg" },
-        { label: "Vinyl / PVC fence", icon: "panels-top-left", image: "/assets/projects/vinyl-fence.jpg" },
-        { label: "Aluminum / ornamental fence", icon: "shield-check", image: "/assets/projects/aluminum-fence.jpg" },
-        { label: "Chain link / agricultural fence", icon: "store", image: "/assets/projects/chain-link-fence.jpg" }
+        { label: "Wood privacy fence", icon: "hammer", image: `${A_W_ASSET_BASE}projects/wood-fence.jpg` },
+        { label: "Vinyl / PVC fence", icon: "panels-top-left", image: `${A_W_ASSET_BASE}projects/vinyl-fence.jpg` },
+        { label: "Aluminum / ornamental fence", icon: "shield-check", image: `${A_W_ASSET_BASE}projects/aluminum-fence.jpg` },
+        { label: "Chain link / agricultural fence", icon: "store", image: `${A_W_ASSET_BASE}projects/chain-link-fence.jpg` }
       ]
     },
     {

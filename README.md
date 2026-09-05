@@ -17,6 +17,11 @@ npm run check
 npm run dev
 ```
 
+Open the local URL printed by Wrangler. VS Code Live Preview can also open
+`public/index.html` directly; the page falls back to the adjacent `config.js`
+and resolves its images relative to that file when the repository is served
+from a nested workspace path.
+
 ## Deployment
 
 ```bash
