@@ -25,7 +25,7 @@ for (const needle of ["a_w_fencing", "+1 (704) 771-1901", "fence_type"]) {
   if (!config.includes(needle)) throw new Error(`Missing config value: ${needle}`);
 }
 
-for (const needle of ["ydufwdgd3z", "showLander", "showProof", "metaLeadEvent"]) {
+for (const needle of ["ydufwdgd3z", "showLander", "showProof", "metaLeadEvent", "Family-Owned", "Serving Lake Norman & Surrounding Areas", "Popular Fence Materials"]) {
   if (!config.includes(needle)) throw new Error(`Missing funnel configuration: ${needle}`);
 }
 

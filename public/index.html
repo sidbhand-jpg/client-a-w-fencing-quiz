@@ -150,6 +150,36 @@
       justify-content: space-between;
       gap: 20px;
     }
+    .feature-strip {
+      width: 100%;
+      border-top: 1px solid rgba(8, 52, 98, 0.12);
+      border-bottom: 1px solid rgba(8, 52, 98, 0.12);
+      background: rgba(255, 255, 255, 0.68);
+      backdrop-filter: blur(8px);
+    }
+    .feature-strip-inner {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: center;
+    }
+    .feature-strip-item {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 2px 14px;
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.25;
+      text-align: center;
+    }
+    .feature-strip-item + .feature-strip-item { border-left: 1px solid rgba(8, 52, 98, 0.16); }
+    .feature-strip-item svg { width: 16px; height: 16px; flex: 0 0 16px; stroke-width: 2.2; }
     .lander-logo-icon {
       width: 40px;
       height: 40px;
@@ -209,7 +239,20 @@
       text-transform: uppercase;
       padding: 6px 14px;
       border-radius: 100px;
+      margin-bottom: 8px;
+    }
+    .lander-location {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       margin-bottom: 20px;
+      color: var(--primary-dark);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .lander-location svg { width: 16px; height: 16px; flex: 0 0 16px; stroke-width: 2.3; }
     }
 
     .lander-headline {
@@ -272,19 +315,53 @@
       pointer-events: none;
     }
 
-    /* Bullet points */
+    /* Organized service highlights */
     .lander-bullets {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
       margin-bottom: 28px;
       text-align: left;
       width: 100%;
     }
     .lander-bullet {
-      font-size: 14px;
+      min-height: 68px;
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 5px 18px rgba(8, 52, 98, 0.07);
+    }
+    .lander-bullet-icon {
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 11px;
+      color: #fff;
+      background: var(--primary);
+    }
+    .lander-bullet-icon svg { width: 21px; height: 21px; stroke-width: 2.1; }
+    .lander-bullet-title {
+      display: block;
       color: var(--text);
-      font-weight: 500;
+      font-family: var(--heading-font);
+      font-size: 14px;
+      font-weight: 750;
+      line-height: 1.3;
+    }
+    .lander-bullet-detail {
+      display: block;
+      margin-top: 3px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.4;
     }
 
     /* CTA button on lander */
@@ -416,6 +493,9 @@
       .gallery-arrow.next { right: 10px; }
       .review-highlights { grid-template-columns: 1fr; }
       .lander-topbar { padding: 14px 16px; }
+      .feature-strip-inner { padding: 9px 8px; }
+      .feature-strip-item { flex-direction: column; gap: 4px; padding: 1px 7px; font-size: 10px; }
+      .feature-strip-item svg { width: 15px; height: 15px; }
       .lander-logo-img { height: 62px; max-width: 48vw; }
       .rating-badge { padding: 8px 9px; gap: 6px; }
       .rating-badge-stars { font-size: 12px; letter-spacing: 0; }
@@ -513,6 +593,9 @@
       font-size: clamp(20px, 5vw, 28px);
       line-height: 1.22; color: var(--text);
       margin-bottom: 28px;
+      min-height: 68px;
+      display: flex;
+      align-items: flex-start;
     }
 
     /* ── Image grid options ── */
@@ -556,7 +639,9 @@
 
     /* ── Button list options ── */
     .options-list {
-      display: flex; flex-direction: column;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-auto-rows: minmax(72px, 1fr);
       gap: 10px; margin-bottom: 24px;
     }
     .option-btn {
@@ -567,6 +652,8 @@
       padding: 16px 18px; cursor: pointer;
       transition: border-color 0.18s, background 0.18s, transform 0.12s;
       text-align: left; width: 100%;
+      min-height: 72px;
+      height: 100%;
       font-family: var(--body-font);
     }
     .option-btn:active { transform: scale(0.98); }
@@ -781,9 +868,14 @@
       </div>
     </div>
 
+    <div class="feature-strip" aria-label="Why choose A & W Fencing">
+      <div class="feature-strip-inner" id="lander-feature-strip"></div>
+    </div>
+
     <!-- Lander content -->
     <div class="lander-body">
       <div class="lander-badge" id="lander-badge"></div>
+      <div class="lander-location" id="lander-location"></div>
       <h1 class="lander-headline" id="lander-headline"></h1>
       <p  class="lander-sub"      id="lander-sub"></p>
 
@@ -858,6 +950,9 @@
         <span class="rating-badge-label">Rated on Google</span>
       </div>
     </header>
+    <div class="feature-strip" aria-label="Why choose A & W Fencing">
+      <div class="feature-strip-inner" id="quiz-feature-strip"></div>
+    </div>
     <div class="progress-bar-wrap">
       <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
     </div>
@@ -964,8 +1059,18 @@
     // ── 5. Build lander ──────────────────────────────────────
     const L = C.lander;
 
+    const featureStripHTML = (C.featureStrip || []).map(item => `
+      <div class="feature-strip-item">
+        <i data-lucide="${item.icon || 'check'}" aria-hidden="true"></i>
+        <span>${item.label}</span>
+      </div>`).join('');
+    document.getElementById('lander-feature-strip').innerHTML = featureStripHTML;
+    document.getElementById('quiz-feature-strip').innerHTML = featureStripHTML;
+
     document.getElementById('lander-logo').innerHTML   = logoHTML(true);
     document.getElementById('lander-badge').textContent = L.badge;
+    document.getElementById('lander-location').innerHTML =
+      `<i data-lucide="map-pin" aria-hidden="true"></i><span>${L.serviceArea}</span>`;
     document.getElementById('lander-headline').innerHTML =
       L.headline.replace(/(Free)/g, '<span>$1</span>'); // highlight "Free"
     document.getElementById('lander-sub').textContent   = L.subheadline;
@@ -1078,11 +1183,20 @@
         </div>`;
     }
 
-    // Bullets
+    // Organized service highlights
     const bulletsEl = document.getElementById('lander-bullets');
-    L.bulletPoints.forEach(b => {
-      bulletsEl.innerHTML += `<div class="lander-bullet">${b}</div>`;
+    (L.highlights || []).forEach(item => {
+      bulletsEl.innerHTML += `
+        <div class="lander-bullet">
+          <span class="lander-bullet-icon"><i data-lucide="${item.icon || 'check'}" aria-hidden="true"></i></span>
+          <span>
+            <span class="lander-bullet-title">${item.title}</span>
+            <span class="lander-bullet-detail">${item.detail}</span>
+          </span>
+        </div>`;
     });
+    renderIcons(document.getElementById('lander-screen'));
+    renderIcons(document.getElementById('quiz-chrome'));
 
     // CTA → start quiz
     document.getElementById('lander-cta').addEventListener('click', startQuiz);

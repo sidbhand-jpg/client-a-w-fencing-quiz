@@ -11,7 +11,7 @@ A config-driven, mobile-first estimate funnel for [A & W Fencing](https://www.a-
 - Meta Conversions API-ready server payload
 - UTM, Meta click ID, `_fbp`, and `_fbc` attribution capture
 - Required call and SMS consent
-- Config-driven business copy, colors, assets, questions, proof, tracking IDs, and integrations
+- Config-driven business copy, colors, assets, trust strip, service highlights, questions, proof, tracking IDs, and integrations
 - Lead delivery to the Houzflow lead router with the `a_w_fencing` client profile
 
 ## Funnel variants
@@ -68,6 +68,17 @@ variants: {
   a: { name: "Lander + proof", showLander: true, showProof: true },
   b: { name: "Lander only", showLander: true, showProof: false },
   c: { name: "Direct to questions", showLander: false, showProof: false }
+},
+
+featureStrip: [
+  { label: "Family-Owned", icon: "users" },
+  { label: "Local North Carolina Team", icon: "map-pin" },
+  { label: "Licensed & Insured", icon: "badge-check" }
+],
+
+lander: {
+  serviceArea: "Serving Lake Norman & Surrounding Areas",
+  highlights: [/* organized title, detail, and icon cards */]
 },
 
 clarityId: "ydufwdgd3z",
