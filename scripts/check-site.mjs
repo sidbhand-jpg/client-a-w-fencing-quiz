@@ -14,14 +14,15 @@ for (const [scriptIndex, match] of [...index.matchAll(/<script(?:\s[^>]*)?>([\s\
 const requiredIndexChecks = [
   ["A & W Fencing", "page title or metadata"],
   ["config.js", "configuration script"],
-  ["quiz_profile", "lead profile payload"],
+  ["new URLSearchParams()", "flat webhook form payload"],
+  ["fence_type:    answers.fence_type", "separate quiz answer fields"],
 ];
 
 for (const [needle, label] of requiredIndexChecks) {
   if (!index.includes(needle)) throw new Error(`Missing ${label}: ${needle}`);
 }
 
-for (const needle of ["a_w_fencing", "+1 (704) 771-1901", "fence_type"]) {
+for (const needle of ["+1 (704) 771-1901", "fence_type"]) {
   if (!config.includes(needle)) throw new Error(`Missing config value: ${needle}`);
 }
 
@@ -31,6 +32,10 @@ for (const needle of ["ydufwdgd3z", "showLander", "showProof", "metaLeadEvent", 
 
 for (const needle of ["eventPrefix}_path_", "eventPrefix}_start", "funnelVariantName", "eventID", "action_source: 'website'"]) {
   if (!index.includes(needle)) throw new Error(`Missing tracking capability: ${needle}`);
+}
+
+for (const removed of ["leadRouterUrl", "quiz_profile", "automated AI assistant", "call could not be started"]) {
+  if (index.includes(removed) || config.includes(removed)) throw new Error(`Lead-router calling remains: ${removed}`);
 }
 
 const assetMatches = [...config.matchAll(/\$\{A_W_ASSET_BASE\}([^`"]+)/g)];

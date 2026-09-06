@@ -148,7 +148,7 @@ window.CONFIG = {
   form: {
     eyebrow: "Almost done!",
     headline: "Where should we send your free estimate details?",
-    subtext: "Submit your project details and our estimate assistant will call within the next few minutes.",
+    subtext: "Submit your project details and our team will follow up about your free estimate.",
     zipPlaceholder: "ZIP code",
     fields: [
       { name: "name", placeholder: "First & last name", type: "text", required: true },
@@ -161,7 +161,7 @@ window.CONFIG = {
 
   thankYou: {
     headline: "Your request is in!",
-    body: "Be on the lookout for a call from our estimate assistant in the next few minutes.",
+    body: "Our team received your project details and will follow up about your free estimate.",
     callPrompt: "Prefer to talk now? Call A & W Fencing:",
     callLabel: "Call (704) 771-1901"
   },
@@ -174,9 +174,7 @@ window.CONFIG = {
     metaLeadEvent: "Lead"
   },
   webhookUrl: "https://hook.eu2.make.com/5vfvj8q3idb1qianqmtdulemt1qmwbsa",
-  leadRouterUrl: "",
-  leadProfile: "a_w_fencing",
-  smsConsentText: "I agree to receive calls and SMS messages from {businessName} about my estimate request, including an immediate call from its automated AI assistant. Message & data rates may apply. Reply STOP to unsubscribe or HELP for help.",
+  smsConsentText: "I agree to receive calls and SMS messages from {businessName} about my estimate request. Message & data rates may apply. Reply STOP to unsubscribe or HELP for help.",
   footerLinks: [
     { label: "A & W Fencing Website", href: "https://www.a-wfencing.com/" },
     { label: "Call (704) 771-1901", href: "tel:+17047711901" }

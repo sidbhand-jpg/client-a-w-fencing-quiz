@@ -1565,49 +1565,44 @@
         if (el) el.value = val;
       });
 
-      // ── Build enriched webhook payload ─────────────────────
+      // ── Build a flat webhook payload so every value is directly mappable ──
       const payload = {
         business:     C.businessName,
+        lead_source:  'A & W Fencing Quiz',
         funnel_variant: funnelVariant.toUpperCase(),
         submitted_at: new Date().toISOString(),
-        contact:      formData,   // includes zip
-        quiz_answers: answers,
-        quiz_profile: C.leadProfile || undefined,
-        attribution: {
-          utm_source:    attribution.utm_source    || '',
-          utm_medium:    attribution.utm_medium    || '',
-          utm_campaign:  attribution.utm_campaign  || '',
-          utm_content:   attribution.utm_content   || '',
-          utm_term:      attribution.utm_term      || '',
-          ad_id:         attribution.ad_id         || '',
-          adset_id:      attribution.adset_id      || '',
-          campaign_id:   attribution.campaign_id   || '',
-          fbclid:        attribution.fbclid        || '',
-          fbp:           attribution.fbp           || '',
-          fbc:           attribution.fbc           || '',
-          source_url:    attribution.source_url    || window.location.href,
-          user_agent:    attribution.user_agent    || navigator.userAgent,
-          lead_event_id: attribution.lead_event_id || '',
-        },
-        // Server-side Meta CAPI handoff. The lead router or automation must
-        // send this event with the same event_id used by the browser Pixel.
-        capi: {
-          event_name: trackingConfig.metaLeadEvent,
-          event_id: attribution.lead_event_id || '',
-          event_time: Math.floor(Date.now() / 1000),
-          action_source: 'website',
-          event_source_url: attribution.source_url || window.location.href,
-          user_data: {
-            client_user_agent: attribution.user_agent || navigator.userAgent,
-            fbp: attribution.fbp || '',
-            fbc: attribution.fbc || '',
-          },
-        },
+        name:          formData.name || '',
+        email:         formData.email || '',
+        phone:         formData.phone || '',
+        zip:           formData.zip || '',
+        fence_type:    answers.fence_type || '',
+        property_type: answers.property_type || '',
+        top_priority:  answers.top_priority || '',
+        timeline:      answers.timeline || '',
+        budget:        answers.budget || '',
+        utm_source:    attribution.utm_source    || '',
+        utm_medium:    attribution.utm_medium    || '',
+        utm_campaign:  attribution.utm_campaign  || '',
+        utm_content:   attribution.utm_content   || '',
+        utm_term:      attribution.utm_term      || '',
+        ad_id:         attribution.ad_id         || '',
+        adset_id:      attribution.adset_id      || '',
+        campaign_id:   attribution.campaign_id   || '',
+        fbclid:        attribution.fbclid        || '',
+        fbp:           attribution.fbp           || '',
+        fbc:           attribution.fbc           || '',
+        source_url:    attribution.source_url    || window.location.href,
+        user_agent:    attribution.user_agent    || navigator.userAgent,
+        lead_event_id: attribution.lead_event_id || '',
+        capi_event_name: trackingConfig.metaLeadEvent,
+        capi_event_id: attribution.lead_event_id || '',
+        capi_event_time: Math.floor(Date.now() / 1000),
+        capi_action_source: 'website',
         sms_consent: smsCheck ? smsCheck.checked : false,
       };
 
-      if (!C.leadRouterUrl) {
-        errorMessage.textContent = `Online calling is being configured. Please call ${C.businessName} directly for now.`;
+      if (!C.webhookUrl) {
+        errorMessage.textContent = 'Online submissions are being configured. Please try again later.';
         btn.disabled = false;
         label.textContent = f.ctaLabel;
         spin.style.display = 'none';
@@ -1615,39 +1610,25 @@
       }
 
       try {
-        const routerResponse = await fetch(C.leadRouterUrl, {
+        const webhookValues = new URLSearchParams();
+        Object.entries(payload).forEach(([key, value]) => webhookValues.append(key, String(value)));
+        await fetch(C.webhookUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: webhookValues,
+          mode: 'no-cors',
         });
-        const routerResult = await routerResponse.json().catch(() => ({}));
-        if (!routerResponse.ok) throw new Error(routerResult.error || 'The call could not be started.');
       } catch (error) {
-        errorMessage.textContent = error.message || `The call could not be started. Please call ${C.businessName} directly.`;
+        console.warn('Webhook error:', error);
+        errorMessage.textContent = 'We could not send your request. Please try again.';
         btn.disabled = false;
         label.textContent = f.ctaLabel;
         spin.style.display = 'none';
         return;
       }
 
-      // Fire the conversion only after the lead router accepts the request.
+      // Fire the conversion only after the webhook request is sent.
       if (typeof fbq !== 'undefined' && attribution.lead_event_id) {
         fbq('track', trackingConfig.metaLeadEvent, {}, { eventID: attribution.lead_event_id });
-      }
-
-      if (C.webhookUrl) {
-        try {
-          await fetch(C.webhookUrl, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify(payload),
-            mode:    'no-cors',
-          });
-        } catch (e) {
-          console.warn('Webhook error:', e);
-        }
-      } else {
-        console.warn('Webhook URL is not configured; submission was not sent.');
       }
 
       currentStep = THANKS_STEP;

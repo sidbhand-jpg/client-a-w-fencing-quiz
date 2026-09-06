@@ -10,9 +10,9 @@ A config-driven, mobile-first estimate funnel for [A & W Fencing](https://www.a-
 - Meta Pixel browser events with a unique deduplication event ID
 - Meta Conversions API-ready server payload
 - UTM, Meta click ID, `_fbp`, and `_fbc` attribution capture
-- Required call and SMS consent
+- Required contact consent
 - Config-driven business copy, colors, assets, questions, proof, tracking IDs, and integrations
-- Lead delivery to the Houzflow lead router with the `a_w_fencing` client profile
+- Direct lead delivery to the configured webhook as separately mappable values
 
 ## Funnel variants
 
@@ -24,7 +24,7 @@ Variant behavior lives in `public/config.js` under `CONFIG.variants`.
 | `/b` or `/` | Lander only, with no information below the first fold | Focused landing experience  |
 | `/c`        | Opens directly on question one                        | Lowest-friction experience  |
 
-All three routes use the same five questions, contact form, lead router, attribution payload, and success screen. Variant C intentionally omits the Back button on question one because it has no initial lander.
+All three routes use the same five questions, contact form, flat webhook payload, attribution values, and success screen. Variant C intentionally omits the Back button on question one because it has no initial lander.
 
 ## Project structure
 
@@ -79,8 +79,7 @@ tracking: {
   metaLeadEvent: "Lead"
 },
 
-leadRouterUrl: "https://houzflow-lead-router.houzflow.workers.dev/api/quiz-lead",
-leadProfile: "a_w_fencing"
+webhookUrl: "https://hook.eu2.make.com/your-webhook-id"
 ```
 
 The Clarity project ID and Meta Pixel ID are public browser configuration. API access tokens are secrets and must never be added to `public/config.js`, `public/index.html`, or any file published in `dist/`.
@@ -159,25 +158,25 @@ Add the public Meta Pixel ID to `CONFIG.metaPixelId` when it is available. The b
 | ------------ | ---------------------------------------------- | ------------------------------------------- |
 | `PageView`   | Page load                                      | Standard browser event                      |
 | `FunnelStep` | Each visited funnel screen                     | Includes step and variant                   |
-| `Lead`       | Only after the lead router accepts the request | Uses `lead_event_id` as the Pixel `eventID` |
+| `Lead`       | After the webhook request is sent              | Uses `lead_event_id` as the Pixel `eventID` |
 
-The form payload includes a `capi` object with `event_name`, `event_id`, `event_time`, `action_source`, `event_source_url`, browser user agent, `_fbp`, and `_fbc`.
+The flat form payload includes `capi_event_name`, `capi_event_id`, `capi_event_time`, and `capi_action_source`, plus the source URL, browser user agent, `_fbp`, and `_fbc` as separate values.
 
-The server-side CAPI sender must use the same `event_id` as the browser Pixel event so Meta can deduplicate them. It should normalize and SHA-256 hash permitted customer identifiers server-side before sending them to Meta. CAPI is not active until the lead router or downstream automation is configured with the Pixel ID and access token and actually sends the server event.
+The server-side CAPI sender must use the same event ID as the browser Pixel event so Meta can deduplicate them. It should normalize and SHA-256 hash permitted customer identifiers server-side before sending them to Meta. CAPI is not active until downstream automation is configured with the Pixel ID and access token and actually sends the server event.
 
-Do not fire a browser `Lead` event or a server CAPI `Lead` event until the lead router accepts a real submission.
+Do not fire a browser `Lead` event or a server CAPI `Lead` event before the webhook request is sent.
 
 ## Attribution and lead delivery
 
-The funnel captures UTM values, Meta campaign IDs, `fbclid`, `_fbp`, `_fbc`, source URL, user agent, unique `lead_event_id`, variant, quiz answers, and explicit call/SMS consent.
+The funnel captures UTM values, Meta campaign IDs, `fbclid`, `_fbp`, `_fbc`, source URL, user agent, unique `lead_event_id`, variant, quiz answers, and explicit contact consent.
 
-Accepted submissions are sent to:
+Submissions are sent directly to the configured Make webhook. Contact details, each quiz answer, each attribution value, consent, and CAPI handoff values are top-level URL-encoded form fields so Make can map them individually. There are no nested `contact`, `quiz_answers`, `attribution`, or `capi` objects.
 
 ```text
-https://houzflow-lead-router.houzflow.workers.dev/api/quiz-lead
+https://hook.eu2.make.com/your-webhook-id
 ```
 
-with `quiz_profile: "a_w_fencing"`. The thank-you screen and conversion event appear only after the router returns a successful response. A failed request remains on the form and shows an error instead of creating a false conversion.
+The quiz no longer calls the Houzflow lead router and does not start an automated call. The thank-you screen and conversion event appear only after the browser sends the webhook request. A network failure remains on the form and shows an error instead of creating a false conversion.
 
 ## Deployment
 
@@ -207,7 +206,7 @@ npm run deploy
 - Add the Meta Pixel ID to `CONFIG.metaPixelId`.
 - Configure the server-side CAPI sender with secrets outside this static project.
 - Verify Pixel/CAPI deduplication using Meta Test Events, then remove `META_TEST_EVENT_CODE` before production.
-- Test lead-router rejection with incomplete data without creating a contact.
-- Complete one authorized real lead test before declaring the full call/SMS workflow live.
+- Confirm the Make webhook exposes contact, quiz, attribution, consent, and CAPI fields as separate values.
+- Complete one authorized real lead test before declaring the webhook workflow live.
 - Confirm the custom domain serves the latest deployment over HTTPS.
 - Keep `.env` ignored and confirm no secrets exist in `dist/` or Git.
