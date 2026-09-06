@@ -72,13 +72,13 @@ variants: {
 
 featureStrip: [
   { label: "Family-Owned", icon: "users" },
-  { label: "Local North Carolina Team", icon: "map-pin" },
+  { label: "Local NC Team", icon: "map-pin" },
   { label: "Licensed & Insured", icon: "badge-check" }
 ],
 
 lander: {
   serviceArea: "Serving Lake Norman & Surrounding Areas",
-  highlights: [/* organized title, detail, and icon cards */]
+  highlights: [/* compact plain-text service lines */]
 },
 
 clarityId: "ydufwdgd3z",

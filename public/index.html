@@ -160,7 +160,7 @@
     .feature-strip-inner {
       width: min(920px, 100%);
       margin: 0 auto;
-      padding: 10px 20px;
+      padding: 6px 16px;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       align-items: center;
@@ -170,16 +170,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 2px 14px;
+      gap: 6px;
+      padding: 0 12px;
       color: var(--primary-dark);
       font-size: 12px;
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1;
       text-align: center;
+      white-space: nowrap;
     }
     .feature-strip-item + .feature-strip-item { border-left: 1px solid rgba(8, 52, 98, 0.16); }
-    .feature-strip-item svg { width: 16px; height: 16px; flex: 0 0 16px; stroke-width: 2.2; }
+    .feature-strip-item svg { width: 14px; height: 14px; flex: 0 0 14px; stroke-width: 2.2; }
     .lander-logo-icon {
       width: 40px;
       height: 40px;
@@ -315,50 +316,19 @@
       pointer-events: none;
     }
 
-    /* Organized service highlights */
+    /* Compact plain-text service highlights */
     .lander-bullets {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 28px;
-      text-align: left;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      column-gap: 14px;
+      row-gap: 5px;
+      margin-bottom: 20px;
+      text-align: center;
       width: 100%;
     }
     .lander-bullet {
-      min-height: 68px;
-      display: grid;
-      grid-template-columns: 42px minmax(0, 1fr);
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.82);
-      box-shadow: 0 5px 18px rgba(8, 52, 98, 0.07);
-    }
-    .lander-bullet-icon {
-      width: 42px;
-      height: 42px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 11px;
-      color: #fff;
-      background: var(--primary);
-    }
-    .lander-bullet-icon svg { width: 21px; height: 21px; stroke-width: 2.1; }
-    .lander-bullet-title {
-      display: block;
       color: var(--text);
-      font-family: var(--heading-font);
-      font-size: 14px;
-      font-weight: 750;
-      line-height: 1.3;
-    }
-    .lander-bullet-detail {
-      display: block;
-      margin-top: 3px;
-      color: var(--text-muted);
       font-size: 12px;
       font-weight: 600;
       line-height: 1.4;
@@ -493,13 +463,23 @@
       .gallery-arrow.next { right: 10px; }
       .review-highlights { grid-template-columns: 1fr; }
       .lander-topbar { padding: 14px 16px; }
-      .feature-strip-inner { padding: 9px 8px; }
-      .feature-strip-item { flex-direction: column; gap: 4px; padding: 1px 7px; font-size: 10px; }
-      .feature-strip-item svg { width: 15px; height: 15px; }
-      .lander-logo-img { height: 62px; max-width: 48vw; }
+      .feature-strip-inner { padding: 5px 3px; }
+      .feature-strip-item { gap: 4px; padding: 0 5px; font-size: 9px; }
+      .feature-strip-item svg { width: 12px; height: 12px; flex-basis: 12px; }
+      .lander-topbar { min-height: 62px; }
+      .lander-logo-img { height: 48px; max-width: 46vw; }
       .rating-badge { padding: 8px 9px; gap: 6px; }
       .rating-badge-stars { font-size: 12px; letter-spacing: 0; }
       .rating-badge-label { font-size: 10px; }
+      .lander-body { padding: 4px 16px 32px; }
+      .lander-badge { margin-bottom: 5px; padding: 5px 11px; font-size: 10px; }
+      .lander-location { margin-bottom: 12px; font-size: 11px; }
+      .lander-headline { margin-bottom: 10px; font-size: clamp(24px, 7vw, 30px); }
+      .lander-sub { margin-bottom: 14px; font-size: 13px; line-height: 1.5; }
+      .crew-photo-wrap { margin-bottom: 14px; border-radius: 14px; }
+      .lander-bullets { margin-bottom: 16px; row-gap: 3px; column-gap: 10px; }
+      .lander-bullet { font-size: 11px; }
+      .lander-cta { padding: 16px 20px; font-size: 16px; margin-bottom: 10px; }
     }
 
     /* ══════════════════════════════════════════════════════
@@ -1183,17 +1163,10 @@
         </div>`;
     }
 
-    // Organized service highlights
+    // Compact plain-text service highlights
     const bulletsEl = document.getElementById('lander-bullets');
     (L.highlights || []).forEach(item => {
-      bulletsEl.innerHTML += `
-        <div class="lander-bullet">
-          <span class="lander-bullet-icon"><i data-lucide="${item.icon || 'check'}" aria-hidden="true"></i></span>
-          <span>
-            <span class="lander-bullet-title">${item.title}</span>
-            <span class="lander-bullet-detail">${item.detail}</span>
-          </span>
-        </div>`;
+      bulletsEl.innerHTML += `<div class="lander-bullet">${item}</div>`;
     });
     renderIcons(document.getElementById('lander-screen'));
     renderIcons(document.getElementById('quiz-chrome'));

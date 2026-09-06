@@ -37,7 +37,7 @@ window.CONFIG = {
 
   featureStrip: [
     { label: "Family-Owned", icon: "users" },
-    { label: "Local North Carolina Team", icon: "map-pin" },
+    { label: "Local NC Team", icon: "map-pin" },
     { label: "Licensed & Insured", icon: "badge-check" }
   ],
 
@@ -47,21 +47,9 @@ window.CONFIG = {
     headline: "Plan Your New Fence in 60 Seconds",
     subheadline: "Tell us what your property needs and A & W Fencing will help you choose the right fence for privacy, security, safety, and curb appeal.",
     highlights: [
-      {
-        icon: "building-2",
-        title: "Fencing for Every Property",
-        detail: "Residential · Commercial · Agricultural"
-      },
-      {
-        icon: "panels-top-left",
-        title: "Popular Fence Materials",
-        detail: "Wood · Vinyl · Aluminum · Chain Link"
-      },
-      {
-        icon: "badge-dollar-sign",
-        title: "Simple Ways to Get Started",
-        detail: "Free Estimates · Financing Available"
-      }
+      "Residential · Commercial · Agricultural",
+      "Wood · Vinyl · Aluminum · Chain Link",
+      "Free Estimates · Financing Available"
     ],
     ctaLabel: "Get My Free Estimate",
     crewImageUrl: `${A_W_ASSET_BASE}fencing-hero.jpg`,
