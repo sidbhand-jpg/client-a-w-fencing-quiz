@@ -173,7 +173,7 @@ window.CONFIG = {
     metaFunnelStepEvent: "FunnelStep",
     metaLeadEvent: "Lead"
   },
-  webhookUrl: "",
+  webhookUrl: "https://hook.eu2.make.com/5vfvj8q3idb1qianqmtdulemt1qmwbsa",
   leadRouterUrl: "https://houzflow-lead-router.houzflow.workers.dev/api/quiz-lead",
   leadProfile: "a_w_fencing",
   smsConsentText: "I agree to receive calls and SMS messages from {businessName} about my estimate request, including an immediate call from its automated AI assistant. Message & data rates may apply. Reply STOP to unsubscribe or HELP for help.",

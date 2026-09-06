@@ -1,6 +1,6 @@
 # A & W Fencing Quiz Funnel
 
-A config-driven, mobile-first estimate funnel for [A & W Fencing](https://www.a-wfencing.com/), deployed on Cloudflare Pages. The target custom domain is [a-wfencing.houzflow.com](https://a-wfencing.houzflow.com/).
+A config-driven, mobile-first estimate funnel for [A & W Fencing](https://www.a-wfencing.com/), deployed on Cloudflare Pages at [a-wfencing.houzflow.com](https://a-wfencing.houzflow.com/).
 
 ## Included capabilities
 
@@ -11,18 +11,18 @@ A config-driven, mobile-first estimate funnel for [A & W Fencing](https://www.a-
 - Meta Conversions API-ready server payload
 - UTM, Meta click ID, `_fbp`, and `_fbc` attribution capture
 - Required call and SMS consent
-- Config-driven business copy, colors, assets, trust strip, service highlights, questions, proof, tracking IDs, and integrations
+- Config-driven business copy, colors, assets, questions, proof, tracking IDs, and integrations
 - Lead delivery to the Houzflow lead router with the `a_w_fencing` client profile
 
 ## Funnel variants
 
 Variant behavior lives in `public/config.js` under `CONFIG.variants`.
 
-| Route | Experience | Intended test |
-| --- | --- | --- |
-| `/a` | Lander followed by gallery and review/proof sections | Information-rich experience |
-| `/b` or `/` | Lander only, with no information below the first fold | Focused landing experience |
-| `/c` | Opens directly on question one | Lowest-friction experience |
+| Route       | Experience                                            | Intended test               |
+| ----------- | ----------------------------------------------------- | --------------------------- |
+| `/a`        | Lander followed by gallery and review/proof sections  | Information-rich experience |
+| `/b` or `/` | Lander only, with no information below the first fold | Focused landing experience  |
+| `/c`        | Opens directly on question one                        | Lowest-friction experience  |
 
 All three routes use the same five questions, contact form, lead router, attribution payload, and success screen. Variant C intentionally omits the Back button on question one because it has no initial lander.
 
@@ -70,17 +70,6 @@ variants: {
   c: { name: "Direct to questions", showLander: false, showProof: false }
 },
 
-featureStrip: [
-  { label: "Family-Owned", icon: "users" },
-  { label: "Local NC Team", icon: "map-pin" },
-  { label: "Licensed & Insured", icon: "badge-check" }
-],
-
-lander: {
-  serviceArea: "Serving Lake Norman & Surrounding Areas",
-  highlights: [/* compact plain-text service lines */]
-},
-
 clarityId: "ydufwdgd3z",
 metaPixelId: "",
 
@@ -100,7 +89,7 @@ The Clarity project ID and Meta Pixel ID are public browser configuration. API a
 
 The local `.env` file is ignored by Git and by the Pages build. Store server-side credentials there during local administration:
 
-```dotenv
+```javascript
 CLARITY_API_TOKEN=
 META_CAPI_ACCESS_TOKEN=
 META_PIXEL_ID=
@@ -115,16 +104,16 @@ META_TEST_EVENT_CODE=
 
 Every screen updates the URL hash while preserving the `/a`, `/b`, or `/c` variant path and query-string attribution.
 
-| Screen | Hash |
-| --- | --- |
-| Lander | `#start` |
-| Fence type | `#step-1-fence_type` |
+| Screen        | Hash                    |
+| ------------- | ----------------------- |
+| Lander        | `#start`                |
+| Fence type    | `#step-1-fence_type`    |
 | Property type | `#step-2-property_type` |
-| Top priority | `#step-3-top_priority` |
-| Timeline | `#step-4-timeline` |
-| Budget | `#step-5-budget` |
-| Contact form | `#contact` |
-| Accepted lead | `#thank-you` |
+| Top priority  | `#step-3-top_priority`  |
+| Timeline      | `#step-4-timeline`      |
+| Budget        | `#step-5-budget`        |
+| Contact form  | `#contact`              |
+| Accepted lead | `#thank-you`            |
 
 The Back button moves through the same step history. On variants A and B, Back from question one returns to the lander. Variant C starts at question one and has no first-question Back button.
 
@@ -166,11 +155,11 @@ The tracking runtime also sets `funnelName`, `funnelVariant`, `funnelVariantName
 
 Add the public Meta Pixel ID to `CONFIG.metaPixelId` when it is available. The browser then emits:
 
-| Event | When | Notes |
-| --- | --- | --- |
-| `PageView` | Page load | Standard browser event |
-| `FunnelStep` | Each visited funnel screen | Includes step and variant |
-| `Lead` | Only after the lead router accepts the request | Uses `lead_event_id` as the Pixel `eventID` |
+| Event        | When                                           | Notes                                       |
+| ------------ | ---------------------------------------------- | ------------------------------------------- |
+| `PageView`   | Page load                                      | Standard browser event                      |
+| `FunnelStep` | Each visited funnel screen                     | Includes step and variant                   |
+| `Lead`       | Only after the lead router accepts the request | Uses `lead_event_id` as the Pixel `eventID` |
 
 The form payload includes a `capi` object with `event_name`, `event_id`, `event_time`, `action_source`, `event_source_url`, browser user agent, `_fbp`, and `_fbc`.
 
@@ -205,8 +194,7 @@ npm run deploy
 ```
 
 - Cloudflare Pages project: `client-a-w-fencing-quiz`
-- Target custom domain: `a-wfencing.houzflow.com`
-- Required DNS record: proxied CNAME `a-wfencing` → `client-a-w-fencing-quiz.pages.dev`
+- Production custom domain: `a-wfencing.houzflow.com`
 - GitHub repository: `sidbhand-jpg/client-a-w-fencing-quiz`
 - Production branch: `main`
 
