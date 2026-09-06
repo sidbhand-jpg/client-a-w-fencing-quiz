@@ -220,7 +220,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 8px 24px 48px;
+      padding: 16px 24px 48px;
       max-width: 540px;
       margin: 0 auto;
       width: 100%;
@@ -240,14 +240,14 @@
       text-transform: uppercase;
       padding: 6px 14px;
       border-radius: 100px;
-      margin-bottom: 8px;
+      margin-bottom: 20px;
     }
     .lander-location {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       color: var(--primary-dark);
       font-size: 13px;
       font-weight: 700;
@@ -471,9 +471,9 @@
       .rating-badge { padding: 8px 9px; gap: 6px; }
       .rating-badge-stars { font-size: 12px; letter-spacing: 0; }
       .rating-badge-label { font-size: 10px; }
-      .lander-body { padding: 4px 16px 32px; }
-      .lander-badge { margin-bottom: 5px; padding: 5px 11px; font-size: 10px; }
-      .lander-location { margin-bottom: 12px; font-size: 11px; }
+      .lander-body { padding: 14px 16px 32px; }
+      .lander-badge { margin-bottom: 16px; padding: 5px 11px; font-size: 10px; }
+      .lander-location { margin-bottom: 7px; font-size: 11px; }
       .lander-headline { margin-bottom: 10px; font-size: clamp(24px, 7vw, 30px); }
       .lander-sub { margin-bottom: 14px; font-size: 13px; line-height: 1.5; }
       .crew-photo-wrap { margin-bottom: 14px; border-radius: 14px; }
@@ -854,8 +854,8 @@
 
     <!-- Lander content -->
     <div class="lander-body">
-      <div class="lander-badge" id="lander-badge"></div>
       <div class="lander-location" id="lander-location"></div>
+      <div class="lander-badge" id="lander-badge"></div>
       <h1 class="lander-headline" id="lander-headline"></h1>
       <p  class="lander-sub"      id="lander-sub"></p>
 
