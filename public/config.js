@@ -27,6 +27,14 @@ window.CONFIG = {
   headingFont: "Sora",
   bodyFont: "Inter",
 
+  // Funnel presentation is controlled here rather than in the page markup.
+  // /a = lander plus proof, /b = lander only, /c = questions immediately.
+  variants: {
+    a: { name: "Lander + proof", showLander: true, showProof: true },
+    b: { name: "Lander only", showLander: true, showProof: false },
+    c: { name: "Direct to questions", showLander: false, showProof: false }
+  },
+
   lander: {
     badge: "Free Fence Estimate - No Obligation",
     headline: "Plan Your New Fence in 60 Seconds",
@@ -56,12 +64,12 @@ window.CONFIG = {
     ]
   },
 
-  // No customer quotes are displayed until verified review text is supplied.
+  // Show the verified rating summary without inventing customer quotes.
   reviews: {
-    enabled: false,
+    enabled: true,
     eyebrow: "Customer reviews",
     headline: "Local Fencing Experience",
-    subheadline: "Verified customer feedback will appear here.",
+    subheadline: "A & W Fencing is rated 5.0 from two published customer reviews.",
     rating: "5.0",
     reviewCount: 2,
     items: []
@@ -151,8 +159,13 @@ window.CONFIG = {
     callLabel: "Call (704) 771-1901"
   },
 
-  clarityId: "",
+  clarityId: "ydufwdgd3z",
   metaPixelId: "",
+  tracking: {
+    eventPrefix: "quiz",
+    metaFunnelStepEvent: "FunnelStep",
+    metaLeadEvent: "Lead"
+  },
   webhookUrl: "",
   leadRouterUrl: "https://houzflow-lead-router.houzflow.workers.dev/api/quiz-lead",
   leadProfile: "a_w_fencing",

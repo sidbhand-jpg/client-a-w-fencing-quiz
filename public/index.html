@@ -8,8 +8,8 @@
   <link rel="icon" href="/assets/logo.png" type="image/png" />
 
   <script>
-    document.documentElement.dataset.funnelVariant =
-      /^\/a(?:\/|$)/i.test(window.location.pathname) ? 'a' : 'b';
+    const routeVariant = window.location.pathname.match(/^\/(a|b|c)(?:\/|$)/i);
+    document.documentElement.dataset.funnelVariant = routeVariant ? routeVariant[1].toLowerCase() : 'b';
   </script>
 
   <!-- CONFIG — must load before this file -->
@@ -17,7 +17,7 @@
   <script>
     // VS Code Live Preview commonly serves this file from /public/index.html,
     // where the production-root URL above does not exist. Load the adjacent
-    // config as a local-preview fallback while keeping /a and /b production-safe.
+    // config as a local-preview fallback while keeping /a, /b, and /c production-safe.
     if (!window.CONFIG) {
       document.write('<script src="./config.js"><\/script>');
     }
@@ -312,9 +312,10 @@
       color: var(--text-muted);
     }
 
-    /* Type B proof sections */
-    .proof-sections { background: var(--bg); }
-    html[data-funnel-variant="a"] .proof-sections { display: none !important; }
+    /* Optional proof sections; visibility is controlled by CONFIG.variants. */
+    .proof-sections { display: none; background: var(--bg); }
+    .proof-sections.visible { display: block; }
+    html[data-funnel-variant="c"] #lander-screen { display: none; }
     .proof-section { padding: 72px 24px; }
     .proof-section.alt { background: var(--surface); }
     .proof-inner { width: min(1080px, 100%); margin: 0 auto; }
@@ -799,7 +800,7 @@
 
   </div>
 
-  <!-- Type B funnel proof: visitors can explore before starting the quiz -->
+  <!-- Optional funnel proof: CONFIG.variants controls whether this is shown -->
   <div class="proof-sections" id="proof-sections">
     <section class="proof-section" aria-labelledby="gallery-title">
       <div class="proof-inner">
@@ -888,6 +889,18 @@
 
     const C = window.CONFIG;
     const funnelVariant = document.documentElement.dataset.funnelVariant || 'b';
+    const defaultVariants = {
+      a: { name: 'Lander + proof', showLander: true, showProof: true },
+      b: { name: 'Lander only', showLander: true, showProof: false },
+      c: { name: 'Direct to questions', showLander: false, showProof: false },
+    };
+    const variantConfig = { ...defaultVariants[funnelVariant], ...(C.variants?.[funnelVariant] || {}) };
+    const trackingConfig = {
+      eventPrefix: 'quiz',
+      metaFunnelStepEvent: 'FunnelStep',
+      metaLeadEvent: 'Lead',
+      ...(C.tracking || {}),
+    };
 
     // ── 1. Apply CSS variables ───────────────────────────────
     const R = document.documentElement.style;
@@ -959,7 +972,7 @@
     document.getElementById('lander-cta').textContent   = L.ctaLabel;
     document.getElementById('lander-trust').textContent = L.trustNote;
 
-    // Type B gallery and review proof
+    // Optional gallery and review proof
     const G = C.gallery;
     document.getElementById('gallery-eyebrow').textContent = G.eyebrow;
     document.getElementById('gallery-title').textContent = G.headline;
@@ -1140,6 +1153,12 @@
     const answers     = {};
     const trackedClaritySteps = new Set();
 
+    function emitClarityEventOnce(eventName) {
+      if (!window.clarity || trackedClaritySteps.has(eventName)) return;
+      window.clarity('event', eventName);
+      trackedClaritySteps.add(eventName);
+    }
+
     // ── 8a. Hash map ─────────────────────────────────────────
     function stepToHash(step) {
       if (step === 0)              return '#start';
@@ -1160,27 +1179,25 @@
     // ── 8b. Per-step tracking ─────────────────────────────────
     function trackStep(step) {
       const label = stepToHash(step).replace('#', '');
-      const clarityEventName = `quiz_${label.replace(/-/g, '_')}`;
+      const clarityEventName = `${trackingConfig.eventPrefix}_${label.replace(/-/g, '_')}`;
 
       // Keep the current step as a recording filter and emit one funnel event
       // per screen. The Set prevents browser-back navigation from double firing.
       if (window.clarity) {
         window.clarity('set', 'funnelStep', label);
-        if (!trackedClaritySteps.has(clarityEventName)) {
-          window.clarity('event', clarityEventName);
-          trackedClaritySteps.add(clarityEventName);
-        }
+        emitClarityEventOnce(clarityEventName);
       }
       // FunnelStep custom pixel event (non-standard, safe to fire on every step)
       // Note: fbq('track', 'Lead') is fired in handleSubmit with a deduplication
       // eventID so it is intentionally NOT fired here on THANKS_STEP.
       if (window.fbq) {
-        fbq('trackCustom', 'FunnelStep', { step: label, variant: funnelVariant.toUpperCase() });
+        fbq('trackCustom', trackingConfig.metaFunnelStepEvent, { step: label, variant: funnelVariant.toUpperCase() });
       }
     }
 
     // ── 9. Transition: lander → quiz ─────────────────────────
     function startQuiz() {
+      emitClarityEventOnce(`${trackingConfig.eventPrefix}_start`);
       // Hide lander, show quiz chrome + funnel
       document.getElementById('lander-screen').classList.add('hidden');
       document.getElementById('proof-sections').classList.add('hidden');
@@ -1208,8 +1225,9 @@
       setTimeout(() => {
         if (step === 0) {
           // Back to lander
-          document.getElementById('lander-screen').classList.remove('hidden');
-          document.getElementById('proof-sections').classList.remove('hidden');
+          document.getElementById('lander-screen').classList.toggle('hidden', !variantConfig.showLander);
+          document.getElementById('proof-sections').classList.toggle('hidden', !variantConfig.showProof);
+          document.getElementById('proof-sections').classList.toggle('visible', variantConfig.showProof);
           document.getElementById('quiz-chrome').classList.remove('visible');
           document.getElementById('funnel-wrap').classList.add('hidden');
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1258,7 +1276,7 @@
         <p class="q-progress-label">${q.progress}</p>
         <h2 class="q-headline">${q.question}</h2>
         ${renderOptionsHTML(q)}
-        <button class="back-btn" id="back-btn">← Back</button>
+        ${(qIndex > 0 || variantConfig.showLander) ? '<button class="back-btn" id="back-btn">← Back</button>' : ''}
       `;
       container.appendChild(div);
       renderIcons(div);
@@ -1266,10 +1284,10 @@
         currentStep++;
         renderStep(currentStep);
       });
-      div.querySelector('#back-btn').addEventListener('click', () => {
-        currentStep--;
-        renderStep(currentStep);
-      });
+      div.querySelector('#back-btn')?.addEventListener('click', () => {
+          currentStep--;
+          renderStep(currentStep);
+        });
     }
 
     function renderOptionsHTML(q) {
@@ -1484,6 +1502,20 @@
           user_agent:    attribution.user_agent    || navigator.userAgent,
           lead_event_id: attribution.lead_event_id || '',
         },
+        // Server-side Meta CAPI handoff. The lead router or automation must
+        // send this event with the same event_id used by the browser Pixel.
+        capi: {
+          event_name: trackingConfig.metaLeadEvent,
+          event_id: attribution.lead_event_id || '',
+          event_time: Math.floor(Date.now() / 1000),
+          action_source: 'website',
+          event_source_url: attribution.source_url || window.location.href,
+          user_data: {
+            client_user_agent: attribution.user_agent || navigator.userAgent,
+            fbp: attribution.fbp || '',
+            fbc: attribution.fbc || '',
+          },
+        },
         sms_consent: smsCheck ? smsCheck.checked : false,
       };
 
@@ -1513,7 +1545,7 @@
 
       // Fire the conversion only after the lead router accepts the request.
       if (typeof fbq !== 'undefined' && attribution.lead_event_id) {
-        fbq('track', 'Lead', {}, { eventID: attribution.lead_event_id });
+        fbq('track', trackingConfig.metaLeadEvent, {}, { eventID: attribution.lead_event_id });
       }
 
       if (C.webhookUrl) {
@@ -1557,17 +1589,20 @@
     }
 
     // ── 12. Boot ─────────────────────────────────────────────
-    // Always start on lander — quiz is launched via CTA button
-    // Record the assigned A/B path first, followed by the landing screen.
-    // These queued calls are safe while the async Clarity script is loading.
+    // Record the assigned route first. Lander variants emit quiz_start only
+    // after the CTA is clicked, so Clarity can measure lander-to-quiz drop-off.
     if (window.clarity) {
-      window.clarity('event', `quiz_path_${funnelVariant}`);
-      window.clarity('set', 'funnelStep', 'start');
-      window.clarity('event', 'quiz_start');
-      trackedClaritySteps.add('quiz_start');
+      emitClarityEventOnce(`${trackingConfig.eventPrefix}_path_${funnelVariant}`);
+      window.clarity('set', 'funnelStep', variantConfig.showLander ? 'start' : 'step-1-' + C.questions[0].id);
+      window.clarity('set', 'funnelVariantName', variantConfig.name);
     }
 
-    window.location.hash = '#start';
+    document.getElementById('proof-sections').classList.toggle('visible', variantConfig.showProof);
+    if (variantConfig.showLander) {
+      window.location.hash = '#start';
+    } else {
+      startQuiz();
+    }
 
   })();
   </script>
