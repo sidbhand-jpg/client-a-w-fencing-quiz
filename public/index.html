@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Free Fence Estimate | A & W Fencing</title>
-  <meta name="description" content="Tell A & W Fencing about your residential, commercial, or agricultural fence project and request a free estimate in the Lake Norman area." />
+  <meta name="description" content="Tell A & W Fencing about your residential, commercial, or agricultural fence project and request a free estimate in the Charlotte area." />
   <link rel="icon" href="/assets/logo.png" type="image/png" />
 
   <script>
@@ -663,6 +663,38 @@
     }
     .form-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
 
+    .zip-details {
+      display: grid;
+      gap: 9px;
+      margin: -8px 0 22px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #f8fafc;
+    }
+    .zip-detail {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .zip-detail-check {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      margin-top: 1px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--success);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
     .form-field { position: relative; margin-bottom: 12px; }
     .form-input {
       width: 100%;
@@ -951,7 +983,7 @@
   <footer id="footer">
     <div class="footer-links" id="footer-links"></div>
     <div class="footer-copy"  id="footer-copy"></div>
-    <p class="marketing-credit">Marketing by <a href="https://houzflow.com">Houzflow</a></p>
+    <p class="marketing-credit">Marketing by Houzflow</p>
   </footer>
 
   <!-- ============================================================
@@ -1375,12 +1407,24 @@
 
     function renderZipGate() {
       const zipConfig = C.zipVerification || {};
+      const details = Array.isArray(zipConfig.details) ? zipConfig.details : [];
+      const detailsHTML = details.length ? `
+        <div class="zip-details" aria-label="Service details">
+          ${details.map(detail => `
+            <div class="zip-detail">
+              <span class="zip-detail-check" aria-hidden="true">&#10003;</span>
+              <span>${detail}</span>
+            </div>
+          `).join('')}
+        </div>
+      ` : '';
       const div = document.createElement('div');
       div.className = 'screen';
       div.innerHTML = `
         <p class="form-eyebrow text-center">${zipConfig.eyebrow || 'Check your area'}</p>
         <h2 class="form-headline text-center">${zipConfig.headline || "What's your project ZIP code?"}</h2>
         <p class="form-sub text-center">${zipConfig.subtext || ''}</p>
+        ${detailsHTML}
         <div class="form-field zip-field">
           <span class="field-icon" aria-hidden="true">&#128205;</span>
           <input

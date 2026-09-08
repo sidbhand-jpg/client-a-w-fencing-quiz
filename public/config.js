@@ -5,7 +5,7 @@ const A_W_ASSET_BASE = new URL("./assets/", document.currentScript.src).href;
 
 window.CONFIG = {
   businessName: "A & W Fencing",
-  tagline: "Professional Fencing for Lake Norman",
+  tagline: "Professional Fencing for Charlotte",
   phone: "+1 (704) 771-1901",
   businessHours: "Call to schedule your free estimate",
   logoUrl: `${A_W_ASSET_BASE}logo.png`,
@@ -50,6 +50,11 @@ window.CONFIG = {
     eyebrow: "First, let's check your area",
     headline: "What's your project ZIP code?",
     subtext: "Enter the ZIP code where the fence project will take place.",
+    details: [
+      "Serving Charlotte & Surrounding Areas",
+      "Residential, commercial & agricultural fencing",
+      "Free estimates with no obligation"
+    ],
     placeholder: "5-digit ZIP code",
     ctaLabel: "Check Availability",
     invalidMessage: "Enter a valid five-digit ZIP code.",
@@ -66,7 +71,7 @@ window.CONFIG = {
 
   lander: {
     badge: "Free Fence Estimate - No Obligation",
-    serviceArea: "Serving Lake Norman & Surrounding Areas",
+    serviceArea: "Serving Charlotte & Surrounding Areas",
     headline: "Plan Your New Fence in 60 Seconds",
     subheadline: "Tell us what your property needs and A & W Fencing will help you choose the right fence for privacy, security, safety, and curb appeal.",
     highlights: [
@@ -208,7 +213,6 @@ window.CONFIG = {
   webhookUrl: "https://hook.eu2.make.com/5vfvj8q3idb1qianqmtdulemt1qmwbsa",
   smsConsentText: "I agree to receive calls and SMS messages from {businessName} about my estimate request. Message & data rates may apply. Reply STOP to unsubscribe or HELP for help.",
   footerLinks: [
-    { label: "A & W Fencing Website", href: "https://www.a-wfencing.com/" },
     { label: "Call (704) 771-1901", href: "tel:+17047711901" }
   ]
 };

@@ -53,7 +53,7 @@ for (const needle of ["fetch('/api/capi'", "event_id: payload.capi_event_id"]) {
   if (!index.includes(needle)) throw new Error(`Missing browser-to-CAPI handoff: ${needle}`);
 }
 
-for (const needle of ["ydufwdgd3z", "showLander", "showProof", "metaLeadEvent", "Family-Owned", "Serving Lake Norman & Surrounding Areas", "Wood · Vinyl · Aluminum · Chain Link"]) {
+for (const needle of ["ydufwdgd3z", "showLander", "showProof", "metaLeadEvent", "Family-Owned", "Serving Charlotte & Surrounding Areas", "Wood · Vinyl · Aluminum · Chain Link"]) {
   if (!config.includes(needle)) throw new Error(`Missing funnel configuration: ${needle}`);
 }
 
