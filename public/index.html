@@ -8,7 +8,7 @@
   <link rel="icon" href="/assets/logo.png" type="image/png" />
 
   <script>
-    const routeVariant = window.location.pathname.match(/^\/(a|b|c)(?:\/|$)/i);
+    const routeVariant = window.location.pathname.match(/^\/(a|b|c|d)(?:\/|$)/i);
     document.documentElement.dataset.funnelVariant = routeVariant ? routeVariant[1].toLowerCase() : 'b';
   </script>
 
@@ -17,7 +17,7 @@
   <script>
     // VS Code Live Preview commonly serves this file from /public/index.html,
     // where the production-root URL above does not exist. Load the adjacent
-    // config as a local-preview fallback while keeping /a, /b, and /c production-safe.
+    // config as a local-preview fallback while keeping /a, /b, /c, and /d production-safe.
     if (!window.CONFIG) {
       document.write('<script src="./config.js"><\/script>');
     }
@@ -968,6 +968,7 @@
       a: { name: 'Lander + proof', showLander: true, showProof: true },
       b: { name: 'Lander only', showLander: true, showProof: false },
       c: { name: 'Direct to questions', showLander: false, showProof: false },
+      d: { name: 'ZIP-first short form', showLander: false, showProof: false, zipFirst: true, questionIds: ['project_type', 'fence_type'] },
     };
     const variantConfig = { ...defaultVariants[funnelVariant], ...(C.variants?.[funnelVariant] || {}) };
     const trackingConfig = {
@@ -1234,9 +1235,16 @@
     // ── 8. State ─────────────────────────────────────────────
     // step 0 = lander, 1..N = questions, N+1 = form, N+2 = thank you
     let currentStep = 0;
-    const totalQuestions = C.questions.length;
-    const FORM_STEP   = totalQuestions + 1;
-    const THANKS_STEP = totalQuestions + 2;
+    const activeQuestionIds = variantConfig.questionIds || C.defaultQuestionIds;
+    const activeQuestions = Array.isArray(activeQuestionIds)
+      ? activeQuestionIds.map(id => C.questions.find(question => question.id === id)).filter(Boolean)
+      : C.questions;
+    const hasZipGate = Boolean(variantConfig.zipFirst);
+    const questionStepOffset = hasZipGate ? 1 : 0;
+    const totalQuestions = activeQuestions.length;
+    const LAST_QUESTION_STEP = questionStepOffset + totalQuestions;
+    const FORM_STEP   = LAST_QUESTION_STEP + 1;
+    const THANKS_STEP = FORM_STEP + 1;
     const answers     = {};
     const trackedClaritySteps = new Set();
 
@@ -1249,13 +1257,18 @@
     // ── 8a. Hash map ─────────────────────────────────────────
     function stepToHash(step) {
       if (step === 0)              return '#start';
-      if (step <= totalQuestions)  return `#step-${step}-${C.questions[step-1].id}`;
+      if (hasZipGate && step === 1) return '#zip';
+      if (step <= LAST_QUESTION_STEP) {
+        const question = activeQuestions[step - 1 - questionStepOffset];
+        return `#step-${step}-${question.id}`;
+      }
       if (step === FORM_STEP)      return '#contact';
       if (step === THANKS_STEP)    return '#thank-you';
       return '#start';
     }
     function hashToStep(hash) {
       if (!hash || hash === '#start') return 0;
+      if (hash === '#zip')            return hasZipGate ? 1 : 0;
       if (hash === '#contact')        return FORM_STEP;
       if (hash === '#thank-you')      return THANKS_STEP;
       const m = hash.match(/^#step-(\d+)-/);
@@ -1320,12 +1333,13 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
-        if (step <= totalQuestions) renderQuestion(step - 1);
+        if (hasZipGate && step === 1) renderZipGate();
+        else if (step <= LAST_QUESTION_STEP) renderQuestion(step - 1 - questionStepOffset);
         else if (step === FORM_STEP)  renderForm();
         else if (step === THANKS_STEP) renderThanks();
 
         // Progress
-        if (step <= totalQuestions) setProgress(10 + ((step / totalQuestions) * 75));
+        if (step <= LAST_QUESTION_STEP) setProgress(10 + ((step / LAST_QUESTION_STEP) * 75));
         else if (step === FORM_STEP)  setProgress(92);
         else                          setProgress(100);
 
@@ -1355,15 +1369,81 @@
     });
 
     // ── QUESTION SCREEN ───────────────────────────────────────
-    function renderQuestion(qIndex) {
-      const q = C.questions[qIndex];
+    function parseAllowedZipCodes(value) {
+      return new Set(String(value || '').split(',').map(zip => zip.trim()).filter(Boolean));
+    }
+
+    function renderZipGate() {
+      const zipConfig = C.zipVerification || {};
       const div = document.createElement('div');
       div.className = 'screen';
       div.innerHTML = `
-        <p class="q-progress-label">${q.progress}</p>
+        <p class="form-eyebrow text-center">${zipConfig.eyebrow || 'Check your area'}</p>
+        <h2 class="form-headline text-center">${zipConfig.headline || "What's your project ZIP code?"}</h2>
+        <p class="form-sub text-center">${zipConfig.subtext || ''}</p>
+        <div class="form-field zip-field">
+          <span class="field-icon" aria-hidden="true">&#128205;</span>
+          <input
+            class="form-input"
+            type="text"
+            name="zip"
+            id="zip-gate-input"
+            placeholder="${zipConfig.placeholder || '5-digit ZIP code'}"
+            inputmode="numeric"
+            pattern="[0-9]{5}"
+            maxlength="5"
+            required
+            autocomplete="postal-code"
+            value="${answers.zip || ''}"
+          />
+        </div>
+        <p class="submission-error" id="zip-error" role="alert" aria-live="polite"></p>
+        <button class="btn-primary" id="zip-submit-btn">${zipConfig.ctaLabel || 'Check Availability'}</button>
+      `;
+      container.appendChild(div);
+
+      const input = div.querySelector('#zip-gate-input');
+      const error = div.querySelector('#zip-error');
+      const submit = () => {
+        const zip = input.value.trim();
+        const allowedZipCodes = parseAllowedZipCodes(zipConfig.allowedZipCodes);
+        error.textContent = '';
+        input.style.borderColor = '';
+        if (!/^\d{5}$/.test(zip)) {
+          error.textContent = zipConfig.invalidMessage || 'Enter a valid five-digit ZIP code.';
+          input.style.borderColor = '#EF4444';
+          input.focus();
+          return;
+        }
+        if (!allowedZipCodes.has(zip)) {
+          error.textContent = zipConfig.unavailableMessage || 'That ZIP is outside our current service area.';
+          input.style.borderColor = '#EF4444';
+          input.focus();
+          return;
+        }
+        answers.zip = zip;
+        currentStep++;
+        renderStep(currentStep);
+      };
+      div.querySelector('#zip-submit-btn').addEventListener('click', submit);
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submit();
+        }
+      });
+      setTimeout(() => input.focus(), 0);
+    }
+
+    function renderQuestion(qIndex) {
+      const q = activeQuestions[qIndex];
+      const div = document.createElement('div');
+      div.className = 'screen';
+      div.innerHTML = `
+        <p class="q-progress-label">Question ${qIndex + 1} of ${totalQuestions}</p>
         <h2 class="q-headline">${q.question}</h2>
         ${renderOptionsHTML(q)}
-        ${(qIndex > 0 || variantConfig.showLander) ? '<button class="back-btn" id="back-btn">← Back</button>' : ''}
+        ${(qIndex > 0 || hasZipGate || variantConfig.showLander) ? '<button class="back-btn" id="back-btn">← Back</button>' : ''}
       `;
       container.appendChild(div);
       renderIcons(div);
@@ -1449,21 +1529,23 @@
         <h2 class="form-headline text-center">${f.headline}</h2>
         <p class="form-sub text-center">${f.subtext}</p>
         ${fieldsHTML}
-        <!-- ZIP CODE FIELD -->
-        <div class="form-field zip-field">
-          <span class="field-icon">📍</span>
-          <input
-            class="form-input"
-            type="text"
-            name="zip"
-            id="zip-input"
-            placeholder="${f.zipPlaceholder}"
-            inputmode="numeric"
-            maxlength="10"
-            required
-            autocomplete="postal-code"
-          />
-        </div>
+        ${hasZipGate ? '' : `
+          <!-- ZIP CODE FIELD -->
+          <div class="form-field zip-field">
+            <span class="field-icon">📍</span>
+            <input
+              class="form-input"
+              type="text"
+              name="zip"
+              id="zip-input"
+              placeholder="${f.zipPlaceholder}"
+              inputmode="numeric"
+              maxlength="10"
+              required
+              autocomplete="postal-code"
+            />
+          </div>
+        `}
 
         <!-- HIDDEN ATTRIBUTION FIELDS (populated from sessionStorage on submit) -->
         <input type="hidden" name="utm_source"    id="h_utm_source">
@@ -1574,7 +1656,8 @@
         name:          formData.name || '',
         email:         formData.email || '',
         phone:         formData.phone || '',
-        zip:           formData.zip || '',
+        zip:           formData.zip || answers.zip || '',
+        project_type:  answers.project_type || '',
         fence_type:    answers.fence_type || '',
         property_type: answers.property_type || '',
         top_priority:  answers.top_priority || '',
@@ -1626,6 +1709,29 @@
         return;
       }
 
+      // Send the matching server-side Lead event from a same-origin Pages
+      // Function. Meta credentials remain server-side and event_id matches Pixel.
+      try {
+        const capiResponse = await fetch('/api/capi', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            event_id: payload.capi_event_id,
+            source_url: payload.source_url,
+            user_agent: payload.user_agent,
+            name: payload.name,
+            email: payload.email,
+            phone: payload.phone,
+            zip: payload.zip,
+            fbp: payload.fbp,
+            fbc: payload.fbc,
+          }),
+        });
+        if (!capiResponse.ok) console.warn('CAPI event was not accepted.');
+      } catch (error) {
+        console.warn('CAPI request failed:', error);
+      }
+
       // Fire the conversion only after the webhook request is sent.
       if (typeof fbq !== 'undefined' && attribution.lead_event_id) {
         fbq('track', trackingConfig.metaLeadEvent, {}, { eventID: attribution.lead_event_id });
@@ -1661,7 +1767,7 @@
     // after the CTA is clicked, so Clarity can measure lander-to-quiz drop-off.
     if (window.clarity) {
       emitClarityEventOnce(`${trackingConfig.eventPrefix}_path_${funnelVariant}`);
-      window.clarity('set', 'funnelStep', variantConfig.showLander ? 'start' : 'step-1-' + C.questions[0].id);
+      window.clarity('set', 'funnelStep', variantConfig.showLander ? 'start' : (hasZipGate ? 'zip' : 'step-1-' + activeQuestions[0].id));
       window.clarity('set', 'funnelVariantName', variantConfig.name);
     }
 
