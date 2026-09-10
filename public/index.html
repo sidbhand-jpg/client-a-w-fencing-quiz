@@ -1676,9 +1676,25 @@
       div.querySelector('#submit-btn').addEventListener('click', () => handleSubmit(div));
     }
 
+    const WEBHOOK_TIMEOUT_MS = 12000;
+    const CAPI_TIMEOUT_MS = 5000;
+
+    async function fetchWithTimeout(url, options, timeoutMs) {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        return await fetch(url, { ...options, signal: controller.signal });
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    }
+
     async function handleSubmit(formDiv) {
       // Validate all required fields including zip
+      const f = C.form;
       const inputs = formDiv.querySelectorAll('.form-input[required]');
+      const usesImplicitConsent = Boolean(variantConfig.implicitConsent);
       let valid = true;
       inputs.forEach(inp => {
         if (!inp.value.trim()) {
@@ -1711,7 +1727,13 @@
       inputs.forEach(inp => { formData[inp.name] = inp.value.trim(); });
 
       // ── Populate hidden attribution fields ─────────────────
-      const attribution = JSON.parse(sessionStorage.getItem('attribution_data') || '{}');
+      let attribution = {};
+      try {
+        attribution = JSON.parse(sessionStorage.getItem('attribution_data') || '{}');
+      } catch (error) {
+        console.warn('Stored attribution data was invalid and has been reset.', error);
+        sessionStorage.removeItem('attribution_data');
+      }
       const hiddenMap = {
         h_utm_source:    attribution.utm_source    || '',
         h_utm_medium:    attribution.utm_medium    || '',
@@ -1781,11 +1803,11 @@
       try {
         const webhookValues = new URLSearchParams();
         Object.entries(payload).forEach(([key, value]) => webhookValues.append(key, String(value)));
-        await fetch(C.webhookUrl, {
+        await fetchWithTimeout(C.webhookUrl, {
           method: 'POST',
           body: webhookValues,
           mode: 'no-cors',
-        });
+        }, WEBHOOK_TIMEOUT_MS);
       } catch (error) {
         console.warn('Webhook error:', error);
         errorMessage.textContent = 'We could not send your request. Please try again.';
@@ -1798,7 +1820,7 @@
       // Send the matching server-side Lead event from a same-origin Pages
       // Function. Meta credentials remain server-side and event_id matches Pixel.
       try {
-        const capiResponse = await fetch('/api/capi', {
+        const capiResponse = await fetchWithTimeout('/api/capi', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
@@ -1812,7 +1834,7 @@
             fbp: payload.fbp,
             fbc: payload.fbc,
           }),
-        });
+        }, CAPI_TIMEOUT_MS);
         if (!capiResponse.ok) console.warn('CAPI event was not accepted.');
       } catch (error) {
         console.warn('CAPI request failed:', error);

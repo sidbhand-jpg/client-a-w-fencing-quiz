@@ -69,7 +69,19 @@ for (const needle of ["META_CAPI_ACCESS_TOKEN", "crypto.subtle.digest", 'event_n
 }
 
 for (const needle of ["fetch('/api/capi'", "event_id: payload.capi_event_id"]) {
-  if (!index.includes(needle)) throw new Error(`Missing browser-to-CAPI handoff: ${needle}`);
+  if (!index.includes(needle) && !index.includes("fetchWithTimeout('/api/capi'")) throw new Error(`Missing browser-to-CAPI handoff: ${needle}`);
+}
+
+for (const needle of ["WEBHOOK_TIMEOUT_MS", "CAPI_TIMEOUT_MS", "fetchWithTimeout(C.webhookUrl", "controller.abort()", "sessionStorage.removeItem('attribution_data')"]) {
+  if (!index.includes(needle)) throw new Error(`Missing resilient submission behavior: ${needle}`);
+}
+
+const submitHandler = index.slice(index.indexOf("async function handleSubmit"), index.indexOf("function renderThanks"));
+if (!submitHandler.includes("const f = C.form;")) {
+  throw new Error("Submit handler must define form configuration in its own scope.");
+}
+if (!submitHandler.includes("const usesImplicitConsent = Boolean(variantConfig.implicitConsent);")) {
+  throw new Error("Submit handler must define route-specific implicit consent in its own scope.");
 }
 
 for (const needle of ["ydufwdgd3z", "showLander", "showProof", "metaLeadEvent", "Family-Owned", "Serving Charlotte & Surrounding Areas", "Wood · Vinyl · Aluminum · Chain Link"]) {
