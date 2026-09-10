@@ -17,6 +17,12 @@ const requiredIndexChecks = [
   ["config.js", "configuration script"],
   ["new URLSearchParams()", "flat webhook form payload"],
   ["fence_type:    answers.fence_type", "separate quiz answer fields"],
+  ["zip-field-label", "route /d ZIP field label"],
+  ["zipLabelBlink", "route /d ZIP label animation"],
+  ["favicon.webp", "optimized favicon"],
+  ["variantConfig.showProof", "route-specific proof loading"],
+  ["variantConfig.showLander && L.crewImageUrl", "route-specific hero loading"],
+  ["<script defer src=\"https://unpkg.com/lucide", "non-blocking icon library"],
 ];
 
 for (const [needle, label] of requiredIndexChecks) {
@@ -27,15 +33,15 @@ for (const needle of ["+1 (704) 771-1901", "fence_type"]) {
   if (!config.includes(needle)) throw new Error(`Missing config value: ${needle}`);
 }
 
-for (const needle of ["allowedZipCodes", 'questionIds: ["project_type", "fence_type"]', 'id: "project_type"']) {
+for (const needle of ["allowedZipCodes", 'label: "Enter your Zip Code"', 'questionIds: ["project_type", "fence_type"]', 'id: "project_type"']) {
   if (!config.includes(needle)) throw new Error(`Missing route /d configuration: ${needle}`);
 }
 
 const allowedZipMatch = config.match(/allowedZipCodes:\s*"([0-9, ]+)"/);
 if (!allowedZipMatch) throw new Error("Missing comma-separated ZIP allowlist.");
 const allowedZipCodes = allowedZipMatch[1].split(",").map(zip => zip.trim()).filter(Boolean);
-if (allowedZipCodes.length !== 102 || new Set(allowedZipCodes).size !== 102) {
-  throw new Error("Route /d must have exactly 102 unique approved ZIP codes.");
+if (allowedZipCodes.length !== 109 || new Set(allowedZipCodes).size !== 109) {
+  throw new Error("Route /d must have exactly 109 unique approved ZIP codes.");
 }
 if (allowedZipCodes.some(zip => !/^\d{5}$/.test(zip))) {
   throw new Error("Route /d contains an invalid ZIP code.");
@@ -43,6 +49,13 @@ if (allowedZipCodes.some(zip => !/^\d{5}$/.test(zip))) {
 
 for (const needle of ["renderZipGate", "parseAllowedZipCodes", "answers.project_type", "variantConfig.zipFirst"]) {
   if (!index.includes(needle)) throw new Error(`Missing route /d behavior: ${needle}`);
+}
+
+if (!index.includes("a|b|c|d|e") || !index.includes("e: { name: 'Simple short form'")) {
+  throw new Error("Missing route /e browser wiring.");
+}
+if (!config.includes('name: "Simple short form"')) {
+  throw new Error("Missing route /e configuration.");
 }
 
 for (const needle of ["META_CAPI_ACCESS_TOKEN", "crypto.subtle.digest", 'event_name: "Lead"', "event_id: eventId", "CF-Connecting-IP"]) {
@@ -65,7 +78,7 @@ for (const removed of ["leadRouterUrl", "quiz_profile", "automated AI assistant"
   if (index.includes(removed) || config.includes(removed)) throw new Error(`Lead-router calling remains: ${removed}`);
 }
 
-const assetMatches = [...config.matchAll(/\$\{A_W_ASSET_BASE\}([^`"]+)/g)];
+const assetMatches = [...config.matchAll(/\$\{A_W_ASSET_BASE\}([^`"$,\s]+)/g)];
 for (const [, assetPath] of assetMatches) {
   await stat(fileURLToPath(new URL(`assets/${assetPath}`, publicDir)));
 }
@@ -78,4 +91,5 @@ await stat(new URL("a/index.html", distDir));
 await stat(new URL("b/index.html", distDir));
 await stat(new URL("c/index.html", distDir));
 await stat(new URL("d/index.html", distDir));
+await stat(new URL("e/index.html", distDir));
 console.log(`Validated ${assetMatches.length} configured asset references.`);

@@ -8,8 +8,10 @@ window.CONFIG = {
   tagline: "Professional Fencing for Charlotte",
   phone: "+1 (704) 771-1901",
   businessHours: "Call to schedule your free estimate",
-  logoUrl: `${A_W_ASSET_BASE}logo.png`,
+  logoUrl: `${A_W_ASSET_BASE}logo.webp`,
   logoAlt: "A & W Fencing logo",
+  logoWidth: 512,
+  logoHeight: 460,
 
   colors: {
     primary: "#083462",
@@ -30,6 +32,7 @@ window.CONFIG = {
   // Funnel presentation is controlled here rather than in the page markup.
   // /a = lander plus proof, /b = lander only, /c = questions immediately.
   // /d = ZIP verification, project type, fence type, then the lead form.
+  // /e = project type, fence type, then the lead form with an unverified ZIP.
   variants: {
     a: { name: "Lander + proof", showLander: true, showProof: true },
     b: { name: "Lander only", showLander: true, showProof: false },
@@ -40,16 +43,23 @@ window.CONFIG = {
       showProof: false,
       zipFirst: true,
       questionIds: ["project_type", "fence_type"]
+    },
+    e: {
+      name: "Simple short form",
+      showLander: false,
+      showProof: false,
+      questionIds: ["project_type", "fence_type"]
     }
   },
 
   // Route /d compares the visitor's five-digit ZIP against this comma-separated
   // list. Add or remove ZIPs here without changing the funnel code.
   zipVerification: {
-    allowedZipCodes: "27013, 27020, 27028, 27054, 27055, 28006, 28012, 28016, 28021, 28023, 28025, 28027, 28031, 28032, 28033, 28034, 28036, 28037, 28052, 28054, 28056, 28071, 28075, 28078, 28080, 28081, 28083, 28086, 28088, 28090, 28092, 28098, 28101, 28104, 28105, 28107, 28115, 28117, 28120, 28124, 28125, 28127, 28134, 28137, 28138, 28144, 28146, 28147, 28159, 28164, 28166, 28168, 28202, 28203, 28204, 28205, 28206, 28207, 28208, 28209, 28210, 28211, 28212, 28213, 28214, 28215, 28216, 28217, 28226, 28227, 28244, 28246, 28254, 28262, 28269, 28270, 28273, 28277, 28278, 28280, 28281, 28282, 28284, 28285, 28287, 28601, 28602, 28609, 28610, 28612, 28613, 28625, 28634, 28636, 28650, 28658, 28660, 28673, 28677, 28678, 28682, 28689",
+    allowedZipCodes: "27013, 27020, 27028, 27054, 27055, 28006, 28012, 28016, 28021, 28023, 28025, 28027, 28031, 28032, 28033, 28034, 28036, 28037, 28039, 28052, 28054, 28056, 28071, 28072, 28075, 28077, 28078, 28080, 28081, 28083, 28086, 28088, 28090, 28092, 28097, 28098, 28101, 28104, 28105, 28107, 28115, 28117, 28120, 28124, 28125, 28127, 28134, 28137, 28138, 28144, 28146, 28147, 28159, 28164, 28166, 28168, 28202, 28203, 28204, 28205, 28206, 28207, 28208, 28209, 28210, 28211, 28212, 28213, 28214, 28215, 28216, 28217, 28223, 28226, 28227, 28244, 28246, 28254, 28262, 28269, 28270, 28273, 28274, 28277, 28278, 28280, 28281, 28282, 28284, 28285, 28287, 28601, 28602, 28609, 28610, 28612, 28613, 28625, 28634, 28636, 28637, 28650, 28658, 28660, 28673, 28677, 28678, 28682, 28689",
     eyebrow: "First, let's check your area",
     headline: "What's your project ZIP code?",
     subtext: "Enter the ZIP code where the fence project will take place.",
+    label: "Enter your Zip Code",
     details: [
       "Serving Charlotte & Surrounding Areas",
       "Residential, commercial & agricultural fencing",
@@ -80,7 +90,8 @@ window.CONFIG = {
       "Free Estimates · Financing Available"
     ],
     ctaLabel: "Get My Free Estimate",
-    crewImageUrl: `${A_W_ASSET_BASE}fencing-hero.jpg`,
+    crewImageUrl: `${A_W_ASSET_BASE}fencing-hero-960.webp`,
+    crewImageSrcSet: `${A_W_ASSET_BASE}fencing-hero-960.webp 960w, ${A_W_ASSET_BASE}fencing-hero-1440.webp 1440w`,
     crewImageAlt: "Wood privacy fence beside a landscaped home",
     trustNote: "Straightforward planning. Professional installation."
   },
@@ -90,12 +101,12 @@ window.CONFIG = {
     headline: "Find the Right Fit for Your Property",
     subheadline: "Explore the fencing styles and project types offered by A & W Fencing.",
     items: [
-      { title: "Wood Privacy Fencing", location: "Residential", image: `${A_W_ASSET_BASE}projects/wood-fence.jpg`, alt: "Wood privacy fence along a green lawn" },
-      { title: "Vinyl & PVC Fencing", location: "Low maintenance", image: `${A_W_ASSET_BASE}projects/vinyl-fence.jpg`, alt: "Vinyl fence along a landscaped yard" },
-      { title: "Aluminum Fencing", location: "Pool & property safety", image: `${A_W_ASSET_BASE}projects/aluminum-fence.jpg`, alt: "Black aluminum fence beside a lawn" },
-      { title: "Ornamental Gates", location: "Access & curb appeal", image: `${A_W_ASSET_BASE}projects/ornamental-gate.jpg`, alt: "Decorative metal driveway gate" },
-      { title: "Farm & Agricultural", location: "Land & livestock", image: `${A_W_ASSET_BASE}projects/farm-fence.jpg`, alt: "Farm-style fence around an open green space" },
-      { title: "Chain-Link Fencing", location: "Residential & commercial", image: `${A_W_ASSET_BASE}projects/chain-link-fence.jpg`, alt: "Chain-link fence installation" }
+      { title: "Wood Privacy Fencing", location: "Residential", image: `${A_W_ASSET_BASE}projects/wood-fence-640.webp`, imageSrcSet: `${A_W_ASSET_BASE}projects/wood-fence-640.webp 640w, ${A_W_ASSET_BASE}projects/wood-fence-1280.webp 1280w`, alt: "Wood privacy fence along a green lawn" },
+      { title: "Vinyl & PVC Fencing", location: "Low maintenance", image: `${A_W_ASSET_BASE}projects/vinyl-fence-640.webp`, imageSrcSet: `${A_W_ASSET_BASE}projects/vinyl-fence-640.webp 640w, ${A_W_ASSET_BASE}projects/vinyl-fence-1280.webp 1280w`, alt: "Vinyl fence along a landscaped yard" },
+      { title: "Aluminum Fencing", location: "Pool & property safety", image: `${A_W_ASSET_BASE}projects/aluminum-fence-640.webp`, imageSrcSet: `${A_W_ASSET_BASE}projects/aluminum-fence-640.webp 640w, ${A_W_ASSET_BASE}projects/aluminum-fence-1280.webp 1280w`, alt: "Black aluminum fence beside a lawn" },
+      { title: "Ornamental Gates", location: "Access & curb appeal", image: `${A_W_ASSET_BASE}projects/ornamental-gate-640.webp`, imageSrcSet: `${A_W_ASSET_BASE}projects/ornamental-gate-640.webp 640w, ${A_W_ASSET_BASE}projects/ornamental-gate-1280.webp 1280w`, alt: "Decorative metal driveway gate" },
+      { title: "Farm & Agricultural", location: "Land & livestock", image: `${A_W_ASSET_BASE}projects/farm-fence-640.webp`, imageSrcSet: `${A_W_ASSET_BASE}projects/farm-fence-640.webp 640w, ${A_W_ASSET_BASE}projects/farm-fence-1280.webp 1280w`, alt: "Farm-style fence around an open green space" },
+      { title: "Chain-Link Fencing", location: "Residential & commercial", image: `${A_W_ASSET_BASE}projects/chain-link-fence-640.webp`, imageSrcSet: `${A_W_ASSET_BASE}projects/chain-link-fence-640.webp 640w, ${A_W_ASSET_BASE}projects/chain-link-fence-1280.webp 1280w`, alt: "Chain-link fence installation" }
     ]
   },
 
@@ -126,10 +137,10 @@ window.CONFIG = {
       question: "What type of fencing project do you need?",
       type: "image-grid",
       options: [
-        { label: "Wood privacy fence", icon: "hammer", image: `${A_W_ASSET_BASE}projects/wood-fence.jpg` },
-        { label: "Vinyl / PVC fence", icon: "panels-top-left", image: `${A_W_ASSET_BASE}projects/vinyl-fence.jpg` },
-        { label: "Aluminum / ornamental fence", icon: "shield-check", image: `${A_W_ASSET_BASE}projects/aluminum-fence.jpg` },
-        { label: "Chain link / agricultural fence", icon: "store", image: `${A_W_ASSET_BASE}projects/chain-link-fence.jpg` }
+        { label: "Wood privacy fence", icon: "hammer", image: `${A_W_ASSET_BASE}projects/wood-fence-640.webp` },
+        { label: "Vinyl / PVC fence", icon: "panels-top-left", image: `${A_W_ASSET_BASE}projects/vinyl-fence-640.webp` },
+        { label: "Aluminum / ornamental fence", icon: "shield-check", image: `${A_W_ASSET_BASE}projects/aluminum-fence-640.webp` },
+        { label: "Chain link / agricultural fence", icon: "store", image: `${A_W_ASSET_BASE}projects/chain-link-fence-640.webp` }
       ]
     },
     {
