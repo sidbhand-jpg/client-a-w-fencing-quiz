@@ -57,6 +57,12 @@ if (!index.includes("a|b|c|d|e") || !index.includes("e: { name: 'Simple short fo
 if (!config.includes('name: "Simple short form"')) {
   throw new Error("Missing route /e configuration.");
 }
+for (const needle of ['implicitConsent: true', '{ label: "Repair", icon: "wrench" }', '{ label: "Replace", icon: "refresh-cw" }']) {
+  if (!config.includes(needle)) throw new Error(`Missing route /e behavior: ${needle}`);
+}
+for (const needle of ["variantConfig.questionOverrides", "usesImplicitConsent || Boolean(smsCheck?.checked)", "By clicking submit"]) {
+  if (!index.includes(needle) && !config.includes(needle)) throw new Error(`Missing route /e consent or answer wiring: ${needle}`);
+}
 
 for (const needle of ["META_CAPI_ACCESS_TOKEN", "crypto.subtle.digest", 'event_name: "Lead"', "event_id: eventId", "CF-Connecting-IP"]) {
   if (!capiFunction.includes(needle)) throw new Error(`Missing server-side CAPI behavior: ${needle}`);

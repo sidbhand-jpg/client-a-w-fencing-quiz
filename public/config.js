@@ -48,7 +48,17 @@ window.CONFIG = {
       name: "Simple short form",
       showLander: false,
       showProof: false,
-      questionIds: ["project_type", "fence_type"]
+      questionIds: ["project_type", "fence_type"],
+      implicitConsent: true,
+      questionOverrides: {
+        project_type: {
+          options: [
+            { label: "New fence", icon: "panels-top-left" },
+            { label: "Repair", icon: "wrench" },
+            { label: "Replace", icon: "refresh-cw" }
+          ]
+        }
+      }
     }
   },
 
@@ -124,7 +134,7 @@ window.CONFIG = {
   questions: [
     {
       id: "project_type",
-      question: "What type of fence project is this?",
+      question: "What type of fence project are you looking to get done?",
       type: "button-list",
       options: [
         { label: "New fence", icon: "panels-top-left" },
@@ -134,7 +144,7 @@ window.CONFIG = {
     {
       id: "fence_type",
       progress: "Question 1 of 5",
-      question: "What type of fencing project do you need?",
+      question: "What style of fence are you interested in?",
       type: "image-grid",
       options: [
         { label: "Wood privacy fence", icon: "hammer", image: `${A_W_ASSET_BASE}projects/wood-fence-640.webp` },
@@ -223,6 +233,7 @@ window.CONFIG = {
   },
   webhookUrl: "https://hook.eu2.make.com/5vfvj8q3idb1qianqmtdulemt1qmwbsa",
   smsConsentText: "I agree to receive calls and SMS messages from {businessName} about my estimate request. Message & data rates may apply. Reply STOP to unsubscribe or HELP for help.",
+  implicitConsentText: "By clicking submit, you agree to receive calls and SMS messages from {businessName} about your estimate request. Message & data rates may apply. Reply STOP to unsubscribe or HELP for help.",
   footerLinks: [
     { label: "Call (704) 771-1901", href: "tel:+17047711901" }
   ]

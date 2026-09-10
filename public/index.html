@@ -290,6 +290,7 @@
     }
     .crew-photo {
       width: 100%;
+      height: auto;
       aspect-ratio: 16/9;
       object-fit: cover;
       display: block;
@@ -868,6 +869,7 @@
     .sms-consent-label {
       font-size: 11px; color: var(--text-muted); line-height: 1.55;
     }
+    .sms-consent-disclosure { margin: 0; }
     .sms-consent-label a { color: var(--primary); text-decoration: underline; }
 
     /* ── Marketing attribution ── */
@@ -1021,7 +1023,7 @@
       b: { name: 'Lander only', showLander: true, showProof: false },
       c: { name: 'Direct to questions', showLander: false, showProof: false },
       d: { name: 'ZIP-first short form', showLander: false, showProof: false, zipFirst: true, questionIds: ['project_type', 'fence_type'] },
-      e: { name: 'Simple short form', showLander: false, showProof: false, questionIds: ['project_type', 'fence_type'] },
+      e: { name: 'Simple short form', showLander: false, showProof: false, questionIds: ['project_type', 'fence_type'], implicitConsent: true },
     };
     const variantConfig = { ...defaultVariants[funnelVariant], ...(C.variants?.[funnelVariant] || {}) };
     const trackingConfig = {
@@ -1292,7 +1294,12 @@
     let currentStep = 0;
     const activeQuestionIds = variantConfig.questionIds || C.defaultQuestionIds;
     const activeQuestions = Array.isArray(activeQuestionIds)
-      ? activeQuestionIds.map(id => C.questions.find(question => question.id === id)).filter(Boolean)
+      ? activeQuestionIds.map(id => {
+          const question = C.questions.find(item => item.id === id);
+          if (!question) return null;
+          const override = variantConfig.questionOverrides?.[id] || {};
+          return { ...question, ...override };
+        }).filter(Boolean)
       : C.questions;
     const hasZipGate = Boolean(variantConfig.zipFirst);
     const questionStepOffset = hasZipGate ? 1 : 0;
@@ -1586,6 +1593,9 @@
       // SMS consent text (replace {businessName} token)
       const smsText = (C.smsConsentText || 'I agree to receive SMS messages. Reply STOP to unsubscribe.')
         .replace('{businessName}', C.businessName);
+      const usesImplicitConsent = Boolean(variantConfig.implicitConsent);
+      const implicitConsentText = (C.implicitConsentText || 'By clicking submit, you agree to receive calls and SMS messages from {businessName} about your request.')
+        .replace('{businessName}', C.businessName);
 
       const privacyHref = (C.footerLinks.find(l => l.label === 'Privacy Policy') || { href: '#' }).href;
       const termsHref   = (C.footerLinks.find(l => l.label === 'Terms of Use')   || { href: '#' }).href;
@@ -1631,14 +1641,21 @@
         <input type="hidden" name="user_agent"    id="h_user_agent">
         <input type="hidden" name="lead_event_id" id="h_lead_event_id">
 
-        <!-- A2P SMS OPT-IN CHECKBOX (required for 10DLC compliance) -->
         <div class="sms-consent-wrap">
-          <input type="checkbox" id="sms-consent" name="sms_consent" required>
-          <label class="sms-consent-label" for="sms-consent">
-            ${smsText}
-            See our <a href="${privacyHref}">Privacy Policy</a>
-            and <a href="${termsHref}">Terms of Use</a>.
-          </label>
+          ${usesImplicitConsent ? `
+            <p class="sms-consent-label sms-consent-disclosure">
+              ${implicitConsentText}
+              See our <a href="${privacyHref}">Privacy Policy</a>
+              and <a href="${termsHref}">Terms of Use</a>.
+            </p>
+          ` : `
+            <input type="checkbox" id="sms-consent" name="sms_consent" required>
+            <label class="sms-consent-label" for="sms-consent">
+              ${smsText}
+              See our <a href="${privacyHref}">Privacy Policy</a>
+              and <a href="${termsHref}">Terms of Use</a>.
+            </label>
+          `}
         </div>
 
         <p class="submission-error" id="submission-error" role="alert" aria-live="polite"></p>
@@ -1670,7 +1687,8 @@
           valid = false;
         }
       });
-      // Validate SMS consent checkbox
+      // Checkbox-based variants require an explicit opt-in. Route /e records
+      // consent from the disclosure immediately above its submit button.
       const smsCheck = formDiv.querySelector('#sms-consent');
       if (smsCheck && !smsCheck.checked) {
         smsCheck.style.outline = '2px solid #EF4444';
@@ -1749,7 +1767,7 @@
         capi_event_id: attribution.lead_event_id || '',
         capi_event_time: Math.floor(Date.now() / 1000),
         capi_action_source: 'website',
-        sms_consent: smsCheck ? smsCheck.checked : false,
+        sms_consent: usesImplicitConsent || Boolean(smsCheck?.checked),
       };
 
       if (!C.webhookUrl) {
