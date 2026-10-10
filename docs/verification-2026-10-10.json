@@ -1,0 +1,116 @@
+{
+  "verified_at": "2026-10-10T19:46:56.678Z",
+  "production": "https://a-wfencing.houzflow.com/e/",
+  "pages_deployment": "https://d1b93788.client-a-w-fencing-quiz.pages.dev",
+  "worker_version": "96c6732d-1434-463a-98f9-f2d0671e94d0",
+  "make": {
+    "account": "sidbhand@houzflow.com",
+    "scenario_id": 6584903,
+    "hook_id": 2919251,
+    "active": true,
+    "folder": "A&W Fencing",
+    "source_scenario_id": 9765118,
+    "source_scenario_active": false,
+    "old_queue_items": 0,
+    "notification_modules": {
+      "gmail": 0,
+      "sheets": 0,
+      "slack": 0
+    },
+    "service_credentials_verified": true,
+    "destination_mappings_preserved": true
+  },
+  "meta": {
+    "pixel_id": "2105161930386830",
+    "automatic_capi_relay": "disconnected and excluded for this dataset",
+    "live_server_test_receipts": [
+      {
+        "status": 200,
+        "ok": true,
+        "events_received": 1,
+        "event_id": "evt_awtest_live_1791661569706_b257e005",
+        "event_name": "PageView",
+        "test": true
+      },
+      {
+        "status": 200,
+        "ok": true,
+        "events_received": 1,
+        "event_id": "evt_awtest_live_1791661569706_b257e005",
+        "event_name": "FunnelStep",
+        "test": true
+      },
+      {
+        "status": 200,
+        "ok": true,
+        "events_received": 1,
+        "event_id": "evt_awtest_live_1791661569706_b257e005",
+        "event_name": "Lead",
+        "test": true
+      }
+    ],
+    "ordinary_pageview_funnelstep_receipts": [
+      {
+        "status": 200,
+        "ok": true,
+        "events_received": 1,
+        "event_id": "evt_aw_verify_PageView_1791661174057",
+        "event_name": "PageView",
+        "test": false
+      },
+      {
+        "status": 200,
+        "ok": true,
+        "events_received": 1,
+        "event_id": "evt_aw_verify_FunnelStep_1791661174623",
+        "event_name": "FunnelStep",
+        "test": false
+      }
+    ],
+    "browser_lead": "intercepted in local browser harness; never transmitted",
+    "browser_event_ids": "matched against intercepted CAPI payloads",
+    "live_browser_receipt": "not independently correlated to this QA session"
+  },
+  "database": {
+    "synthetic_ids_checked": 14,
+    "lead_rows": 0,
+    "activity_rows": 0,
+    "booking_rows": 0,
+    "router_rows": 0,
+    "queued_meta_rows": 0
+  },
+  "synthetic_event_ids": [
+    "evt_awtest_live_1791660770845_927302f1",
+    "evt_awtest_live_1791660778947_a78d8907",
+    "evt_awtest_live_1791660806291_27e191aa",
+    "evt_awtest_live_1791660817805_1a6c1625",
+    "evt_awtest_live_1791660836883_8aee06bb",
+    "evt_awtest_live_1791660979685_c82d525e",
+    "evt_awtest_live_1791661018429_23738942",
+    "evt_awtest_live_1791661045977_91ea0287",
+    "evt_awtest_live_1791661083455_e0229e02",
+    "evt_awtest_live_1791661174946_19326a1a",
+    "evt_awtest_live_1791661293561_0f76ba1b",
+    "evt_awtest_live_1791661295444_3c1ff0e5",
+    "evt_awtest_live_1791661521644_aa1d32f2",
+    "evt_awtest_live_1791661569706_b257e005"
+  ],
+  "validation": {
+    "approved_zip_count": 109,
+    "all_approved_zips_passed": true,
+    "malformed_and_outside_zips_blocked": true,
+    "trim_and_correction_passed": true,
+    "mobile_width": 390,
+    "all_routes_http_status": 200,
+    "timeout_abort_and_retry": "mocked; passed",
+    "duplicate_handling": "mocked; passed",
+    "unsigned_expired_and_stripped_tests": "rejected live",
+    "normal_persistence_and_notifications": "mocked; no production lead was submitted"
+  },
+  "acceptance_limits": [
+    "No actual lead, appointment, email, sheet row, Slack message, call, or SMS was created by testing.",
+    "Suppressed persistence and notification paths are not live-delivery verified.",
+    "Browser emission and deduplication IDs were verified through interception; live Meta browser receipt was not independently correlated."
+  ],
+  "local_source_state": "Published to GitHub main; production deployment verified"
+}

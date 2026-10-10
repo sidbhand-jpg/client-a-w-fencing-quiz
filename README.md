@@ -4,7 +4,7 @@ A config-driven, mobile-first estimate funnel for [A & W Fencing](https://www.a-
 
 ## Included capabilities
 
-- Four route-controlled funnel experiences: `/a`, `/b`, `/c`, and ZIP-first `/d`
+- Five route-controlled funnel experiences: `/a`, `/b`, `/c`, ZIP-first `/d`, and contact-ZIP `/e`
 - Microsoft Clarity recordings, custom events, tags, and funnel-ready steps
 - Hash-based step URLs for browser navigation and drop-off analysis
 - Meta Pixel browser events with a unique deduplication event ID
@@ -12,7 +12,7 @@ A config-driven, mobile-first estimate funnel for [A & W Fencing](https://www.a-
 - UTM, Meta click ID, `_fbp`, and `_fbc` attribution capture
 - Required contact consent
 - Config-driven business copy, colors, assets, questions, proof, tracking IDs, and integrations
-- Direct lead delivery to the configured webhook as separately mappable values
+- Confirmed same-origin lead handoff to the server-configured Make webhook
 
 ## Funnel variants
 
@@ -24,6 +24,7 @@ Variant behavior lives in `public/config.js` under `CONFIG.variants`.
 | `/b` or `/` | Lander only, with no information below the first fold | Focused landing experience  |
 | `/c`        | Opens directly on question one                        | Lowest-friction experience  |
 | `/d`        | ZIP check, project type, fence type, then lead form    | Short qualified-lead path   |
+| `/e`        | Project type, fence type, then contact ZIP validation | Short contact-qualified path |
 
 Routes A-C use the original five questions. Route D checks a config-defined ZIP allowlist, asks only whether the project is a new fence or repair/replacement, asks the fence type, and then opens the lead form. Variant C intentionally omits the Back button on question one because it has no initial lander.
 
@@ -35,9 +36,10 @@ public/
   config.js           Client, variants, content, and tracking configuration
   assets/             Local logo and fencing imagery
 functions/api/
-  capi.js              Same-origin server-side Meta Lead sender
+  capi.js              Same-origin PageView, FunnelStep, and Lead sender
+  lead.js              Confirmed Make ingestion proxy
 scripts/
-  build-pages.mjs     Builds root plus /a, /b, /c, and /d route entries
+  build-pages.mjs     Builds root plus /a, /b, /c, /d, and /e route entries
   check-site.mjs      Validates routes, assets, config, and tracking hooks
 .env                  Local secrets only; ignored by Git
 .env.example          Safe credential placeholders
@@ -54,12 +56,13 @@ npm run check
 npm run dev
 ```
 
-Wrangler prints the local preview URL. Test all four routes:
+Wrangler prints the local preview URL. Test all five routes:
 
 - `http://localhost:8788/a`
 - `http://localhost:8788/b`
 - `http://localhost:8788/c`
 - `http://localhost:8788/d`
+- `http://localhost:8788/e`
 
 VS Code Live Preview can also open `public/index.html`. The page includes a nested-path fallback for `public/config.js` and resolves local image URLs relative to that config file.
 
@@ -94,7 +97,7 @@ tracking: {
   metaLeadEvent: "Lead"
 },
 
-webhookUrl: "https://hook.eu2.make.com/your-webhook-id"
+leadEndpoint: "/api/lead"
 ```
 
 The Clarity project ID and Meta Pixel ID are public browser configuration. API access tokens are secrets and must never be added to `public/config.js`, `public/index.html`, or any file published in `dist/`.
@@ -112,7 +115,7 @@ META_TEST_EVENT_CODE=
 
 `CLARITY_API_TOKEN` is a Clarity Data Export token. It can read recent analytics but cannot create or edit dashboard funnels. Dashboard funnels are created in the authenticated Clarity interface.
 
-`META_CAPI_ACCESS_TOKEN` is a server-side credential. Never expose it to browser JavaScript. The production copy belongs in the Cloudflare Pages Function environment. `META_TEST_EVENT_CODE` is only for validation and must not remain configured in production.
+`META_CAPI_ACCESS_TOKEN` is a server-side credential. Never expose it to browser JavaScript. The production copy belongs in the Cloudflare Pages Function environment. `META_TEST_EVENT_CODE` is used only for authenticated synthetic tests, even when configured in production.
 
 ## Step-based URLs
 
@@ -184,25 +187,29 @@ The public Meta Pixel ID in `CONFIG.metaPixelId` enables these browser events:
 | ------------ | ---------------------------------------------- | ------------------------------------------- |
 | `PageView`   | Page load                                      | Standard browser event                      |
 | `FunnelStep` | Each visited funnel screen                     | Includes step and variant                   |
-| `Lead`       | After the webhook request is sent              | Uses `lead_event_id` as the Pixel `eventID` |
+| `Lead`       | After ingestion acceptance              | Uses `lead_event_id` as the Pixel `eventID` |
 
 The flat form payload includes `capi_event_name`, `capi_event_id`, `capi_event_time`, and `capi_action_source`, plus the source URL, browser user agent, `_fbp`, and `_fbc` as separate values.
 
 The same-origin `/api/capi` Pages Function uses the same event ID as the browser Pixel event so Meta can deduplicate them. It normalizes and SHA-256 hashes email, phone, first name, last name, ZIP, and country server-side; it also supplies available browser IDs, user agent, and Cloudflare client IP. Meta credentials never enter the built browser assets.
 
-Do not fire a browser `Lead` event or a server CAPI `Lead` event before the webhook request is sent.
+Both Lead senders require confirmed ingestion acceptance. Server Lead additionally requires a short-lived signed acceptance receipt. PageView and FunnelStep use matching browser/server event IDs. The quiz Pages Function is the sole quiz CAPI sender; the Make intake contains no Meta relay. A&W dataset 2105161930386830 was disconnected and excluded from Meta’s automatic Conversions API relay to prevent a second quiz server sender.
 
 ## Attribution and lead delivery
 
 The funnel captures UTM values, Meta campaign IDs, `fbclid`, `_fbp`, `_fbc`, source URL, user agent, unique `lead_event_id`, variant, `project_type`, other quiz answers, and explicit contact consent.
 
-Submissions are sent directly to the configured Make webhook. Contact details, each quiz answer, each attribution value, consent, and CAPI handoff values are top-level URL-encoded form fields so Make can map them individually. There are no nested `contact`, `quiz_answers`, `attribution`, or `capi` objects.
+Submissions use same-origin `POST /api/lead`, forwarding the existing flat URL-encoded payload to the server-only webhook URL. Make returns an explicit matching ingestion receipt before the UI shows success or emits Lead. Network errors, rejections, and timeouts retain the form for retry.
 
-```text
-https://hook.eu2.make.com/your-webhook-id
-```
+Path E trims the ZIP and requires exactly five digits in the existing 109-ZIP allowlist. The server handoff checks the same generated list, sourced from `CONFIG.zipVerification.allowedZipCodes`. Other routes retain their validation rules.
 
-The quiz no longer calls the Houzflow lead router and does not start an automated call. The thank-you screen and conversion event appear only after the browser sends the webhook request. A network failure remains on the form and shows an error instead of creating a false conversion.
+Make scenario 6584903 in the main account preserves HTTP ingestion, Gmail, Google Sheets, and Slack. Webhook Response follows ingestion; notifications require HTTP 201, `notify_eligible=yes`, and `test=false`. Duplicates and signed synthetic requests cannot notify. Normal newly persisted leads retain the existing router dispatch.
+
+## Safe synthetic verification
+
+Set `AW_TEST_SIGNING_KEY` identically in Pages and the A&W ingestion Worker. Test requests require `test_mode=true`, `evt_awtest_` event IDs, fixed synthetic contact values, a timestamp within five minutes, and an HMAC-SHA256 signature over the ordered fields in `functions/_lib/security.js`. Reserved `evt_awtest_` IDs also require signed test mode, even if the flags are stripped. Invalid markers/signatures never fall through to production ingestion. Valid tests return before any database write or router dispatch.
+
+`AW_MAKE_WEBHOOK_URL`, `AW_TEST_SIGNING_KEY`, `META_PIXEL_ID`, `META_CAPI_ACCESS_TOKEN`, and `META_TEST_EVENT_CODE` are encrypted Pages variables. Meta test codes apply only to authorized synthetic events; ordinary traffic never inherits them. Browser Lead checks use a local intercepted test harness. Production notification and persistence checks are mocked; do not describe those suppressed effects as live delivery.
 
 ## Deployment
 
@@ -218,7 +225,7 @@ Deploy the production branch:
 npm run deploy
 ```
 
-Before the first production CAPI deployment, add `META_PIXEL_ID` and `META_CAPI_ACCESS_TOKEN` as encrypted variables for the `client-a-w-fencing-quiz` Pages project. Do not add `META_TEST_EVENT_CODE` to production; keep it only in local `.env` while viewing Meta Test Events.
+Configure the encrypted variables listed above before deploying. Never publish their values in browser assets.
 
 - Cloudflare Pages project: `client-a-w-fencing-quiz`
 - Production custom domain: `a-wfencing.houzflow.com`
@@ -234,8 +241,8 @@ Before the first production CAPI deployment, add `META_PIXEL_ID` and `META_CAPI_
 - Confirm all four Clarity event sequences appear before building dashboard funnels.
 - Confirm `CONFIG.metaPixelId` matches the A&W Fencing dataset.
 - Configure the Pages Function with encrypted `META_PIXEL_ID` and `META_CAPI_ACCESS_TOKEN` values.
-- Verify Pixel/CAPI deduplication using Meta Test Events, then remove `META_TEST_EVENT_CODE` before production.
+- Verify matching Pixel/CAPI event IDs and synthetic server Test Events receipts.
 - Confirm the Make webhook exposes contact, quiz, attribution, consent, and CAPI fields as separate values.
-- Complete one authorized real lead test before declaring the webhook workflow live.
+- Run signed synthetic webhook tests and verify zero persistence or notification actions. Real delivery remains unverified until separately authorized.
 - Confirm the custom domain serves the latest deployment over HTTPS.
 - Keep `.env` ignored and confirm no secrets exist in `dist/` or Git.

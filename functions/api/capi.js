@@ -1,3 +1,4 @@
+import { validReceipt, hasTestMarker, validTest } from '../_lib/security.js';
 const encoder = new TextEncoder();
 
 function json(body, status = 200) {
@@ -45,15 +46,27 @@ export async function onRequestPost({ request, env }) {
   } catch {
     return json({ ok: false, error: "Invalid JSON" }, 400);
   }
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return json({ ok: false, error: 'Invalid event' }, 400);
 
   const eventId = String(input.event_id || "").trim();
+  const eventName = String(input.event_name || 'Lead');
+  if (!['PageView', 'FunnelStep', 'Lead'].includes(eventName)) return json({ ok: false, error: 'Invalid event name' }, 400);
   if (!/^evt_[a-zA-Z0-9_]+$/.test(eventId)) {
     return json({ ok: false, error: "Invalid event ID" }, 400);
   }
 
   const email = normalize(input.email);
   const phone = cleanPhone(input.phone);
-  if (!email || !phone) {
+  let test = false;
+  if (eventName === 'Lead') {
+    if (!(await validReceipt(input.lead_receipt, eventId, env.AW_TEST_SIGNING_KEY))) return json({ ok: false, error: 'Accepted lead receipt required' }, 403);
+    test = input.lead_receipt.test;
+  } else if (hasTestMarker(input)) {
+    if (!(await validTest(input, env.AW_TEST_SIGNING_KEY)) || input.lead_event_id !== eventId) return json({ ok: false, error: 'Unauthorized test event' }, 403);
+    test = true;
+  }
+  if (test && !env.META_TEST_EVENT_CODE) return json({ ok: false, error: 'Meta test events are not configured' }, 503);
+  if (eventName === 'Lead' && (!email || !phone)) {
     return json({ ok: false, error: "Email and phone are required" }, 400);
   }
 
@@ -69,8 +82,8 @@ export async function onRequestPost({ request, env }) {
     country: await hashedValues(["us"]),
     client_ip_address: request.headers.get("CF-Connecting-IP") || undefined,
     client_user_agent: String(input.user_agent || request.headers.get("user-agent") || ""),
-    fbp: String(input.fbp || "") || undefined,
-    fbc: String(input.fbc || "") || undefined,
+    fbp: /^fb\.\d\.\d+\.\d+$/.test(input.fbp || '') ? input.fbp : undefined,
+    fbc: /^fb\.\d\.\d+\.[A-Za-z0-9_-]+$/.test(input.fbc || '') ? input.fbc : undefined,
   };
 
   Object.keys(userData).forEach(key => {
@@ -87,24 +100,37 @@ export async function onRequestPost({ request, env }) {
   }
   const payload = {
     data: [{
-      event_name: "Lead",
+      event_name: eventName,
       event_time: Math.floor(Date.now() / 1000),
       event_id: eventId,
       action_source: "website",
       event_source_url: sourceUrl,
       user_data: userData,
+      custom_data: {
+        variant: String(input.variant || '').slice(0, 10),
+        ...(eventName === 'FunnelStep' ? { step: String(input.step || '').slice(0, 100) } : {}),
+      },
     }],
   };
-  if (env.META_TEST_EVENT_CODE) payload.test_event_code = env.META_TEST_EVENT_CODE;
+  // Never route ordinary production traffic into Test Events.
+  if (test) payload.test_event_code = env.META_TEST_EVENT_CODE;
 
-  const metaResponse = await fetch(`https://graph.facebook.com/${env.META_PIXEL_ID}/events`, {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 4500);
+  let metaResponse;
+  try {
+    metaResponse = await fetch(`https://graph.facebook.com/${env.META_PIXEL_ID}/events`, {
     method: "POST",
     headers: {
       authorization: `Bearer ${env.META_CAPI_ACCESS_TOKEN}`,
       "content-type": "application/json",
     },
     body: JSON.stringify(payload),
+    signal: controller.signal,
   });
+  } catch {
+    return json({ ok: false, error: 'Meta request failed' }, 502);
+  } finally { clearTimeout(timer); }
   const metaBody = await metaResponse.json().catch(() => ({}));
 
   if (!metaResponse.ok || metaBody.events_received !== 1) {
@@ -112,5 +138,5 @@ export async function onRequestPost({ request, env }) {
     return json({ ok: false, error: "Meta rejected the event" }, 502);
   }
 
-  return json({ ok: true, events_received: 1, event_id: eventId });
+  return json({ ok: true, events_received: 1, event_id: eventId, event_name: eventName, test });
 }

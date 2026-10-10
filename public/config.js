@@ -32,7 +32,7 @@ window.CONFIG = {
   // Funnel presentation is controlled here rather than in the page markup.
   // /a = lander plus proof, /b = lander only, /c = questions immediately.
   // /d = ZIP verification, project type, fence type, then the lead form.
-  // /e = project type, fence type, then the lead form with an unverified ZIP.
+  // /e = project type, fence type, then the lead form with ZIP verification.
   variants: {
     a: { name: "Lander + proof", showLander: true, showProof: true },
     b: { name: "Lander only", showLander: true, showProof: false },
@@ -48,6 +48,7 @@ window.CONFIG = {
       name: "Simple short form",
       showLander: false,
       showProof: false,
+      verifyZipOnSubmit: true,
       questionIds: ["project_type", "fence_type"],
       implicitConsent: true,
       questionOverrides: {
@@ -62,7 +63,7 @@ window.CONFIG = {
     }
   },
 
-  // Route /d compares the visitor's five-digit ZIP against this comma-separated
+  // Routes /d and /e compare the visitor's five-digit ZIP against this comma-separated
   // list. Add or remove ZIPs here without changing the funnel code.
   zipVerification: {
     allowedZipCodes: "27013, 27020, 27028, 27054, 27055, 28006, 28012, 28016, 28021, 28023, 28025, 28027, 28031, 28032, 28033, 28034, 28036, 28037, 28039, 28052, 28054, 28056, 28071, 28072, 28075, 28077, 28078, 28080, 28081, 28083, 28086, 28088, 28090, 28092, 28097, 28098, 28101, 28104, 28105, 28107, 28115, 28117, 28120, 28124, 28125, 28127, 28134, 28137, 28138, 28144, 28146, 28147, 28159, 28164, 28166, 28168, 28202, 28203, 28204, 28205, 28206, 28207, 28208, 28209, 28210, 28211, 28212, 28213, 28214, 28215, 28216, 28217, 28223, 28226, 28227, 28244, 28246, 28254, 28262, 28269, 28270, 28273, 28274, 28277, 28278, 28280, 28281, 28282, 28284, 28285, 28287, 28601, 28602, 28609, 28610, 28612, 28613, 28625, 28634, 28636, 28637, 28650, 28658, 28660, 28673, 28677, 28678, 28682, 28689",
@@ -231,7 +232,7 @@ window.CONFIG = {
     metaFunnelStepEvent: "FunnelStep",
     metaLeadEvent: "Lead"
   },
-  webhookUrl: "https://hook.eu2.make.com/5vfvj8q3idb1qianqmtdulemt1qmwbsa",
+  leadEndpoint: "/api/lead",
   smsConsentText: "I agree to receive calls and SMS messages from {businessName} about my estimate request. Message & data rates may apply. Reply STOP to unsubscribe or HELP for help.",
   implicitConsentText: "By clicking submit, you agree to receive calls and SMS messages from {businessName} about your estimate request. Message & data rates may apply. Reply STOP to unsubscribe or HELP for help.",
   footerLinks: [

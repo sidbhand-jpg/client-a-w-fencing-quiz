@@ -1066,7 +1066,7 @@
     if (C.metaPixelId && C.metaPixelId !== 'YOUR_META_PIXEL_ID') {
       window._metaTag.src = 'https://connect.facebook.net/en_US/fbevents.js';
       fbq('init', C.metaPixelId);
-      fbq('track', 'PageView');
+      // PageView is sent with its matching server event after attribution is ready.
       const ns = document.createElement('noscript');
       ns.innerHTML = `<img height="1" width="1" style="display:none"
         src="https://www.facebook.com/tr?id=${C.metaPixelId}&ev=PageView&noscript=1"/>`;
@@ -1277,17 +1277,55 @@
         user_agent:    navigator.userAgent,
         lead_event_id: genEventId(),
       };
-      sessionStorage.setItem('attribution_data', JSON.stringify(data));
+      window.awAttribution = data;
+      try { sessionStorage.setItem('attribution_data', JSON.stringify(data)); } catch {}
       // First-touch: persist only once per browser
-      if (!localStorage.getItem('first_touch_data')) {
+      try { if (!localStorage.getItem('first_touch_data')) {
         localStorage.setItem('first_touch_data', JSON.stringify({
           source:    data.utm_source,
           campaign:  data.utm_campaign,
           ad_id:     data.ad_id,
           timestamp: Date.now(),
         }));
-      }
+      } } catch {}
     })();
+
+    function eventId() {
+      return 'evt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11);
+    }
+
+    function browserIdentifiers() {
+      function cookie(name) {
+        return document.cookie.split('; ').find(value => value.startsWith(name + '='))?.slice(name.length + 1) || '';
+      }
+      let fbp = cookie('_fbp');
+      if (!/^fb\.\d\.\d+\.\d+$/.test(fbp)) {
+        fbp = 'fb.1.' + Date.now() + '.' + Math.floor(Math.random() * 1e12);
+        document.cookie = '_fbp=' + fbp + '; path=/; max-age=7776000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+      }
+      const fbclid = new URLSearchParams(location.search).get('fbclid');
+      let fbc = cookie('_fbc');
+      if (fbclid && fbclid !== 'fbclid') {
+        if (!fbc.endsWith('.' + fbclid)) fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+        document.cookie = '_fbc=' + fbc + '; path=/; max-age=7776000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+      }
+      return { fbp, fbc: /^fb\.\d\.\d+\.[A-Za-z0-9_-]+$/.test(fbc) && !fbc.endsWith('.fbclid') ? fbc : '' };
+    }
+
+    function sendMetaEvent(name, id, details = {}, contact = {}) {
+      if (!C.metaPixelId) return Promise.resolve();
+      const identifiers = browserIdentifiers();
+      if (window.fbq) fbq(name === 'FunnelStep' ? 'trackCustom' : 'track', name, details, { eventID: id });
+      return fetchWithTimeout('/api/capi', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ event_name: name, event_id: id, source_url: location.href, user_agent: navigator.userAgent,
+          variant: funnelVariant.toUpperCase(), ...details, ...identifiers, ...contact }),
+      }, 5000).then(response => { if (!response.ok) console.warn('CAPI event was not accepted:', name); })
+        .catch(() => console.warn('CAPI request failed:', name));
+    }
+
+    // Each page load and screen visit uses one ID for browser/server deduplication.
+    sendMetaEvent('PageView', eventId());
 
     // ── 8. State ─────────────────────────────────────────────
     // step 0 = lander, 1..N = questions, N+1 = form, N+2 = thank you
@@ -1352,9 +1390,7 @@
       // FunnelStep custom pixel event (non-standard, safe to fire on every step)
       // Note: fbq('track', 'Lead') is fired in handleSubmit with a deduplication
       // eventID so it is intentionally NOT fired here on THANKS_STEP.
-      if (window.fbq) {
-        fbq('trackCustom', trackingConfig.metaFunnelStepEvent, { step: label, variant: funnelVariant.toUpperCase() });
-      }
+      sendMetaEvent(trackingConfig.metaFunnelStepEvent, eventId(), { step: label, variant: funnelVariant.toUpperCase() });
     }
 
     // ── 9. Transition: lander → quiz ─────────────────────────
@@ -1619,6 +1655,7 @@
               placeholder="${f.zipPlaceholder}"
               inputmode="numeric"
               maxlength="10"
+              ${variantConfig.verifyZipOnSubmit ? 'pattern="[0-9]{5}" aria-describedby="submission-error"' : ''}
               required
               autocomplete="postal-code"
             />
@@ -1691,10 +1728,33 @@
     }
 
     async function handleSubmit(formDiv) {
+      if (formDiv.querySelector('#submit-btn').disabled) return;
       // Validate all required fields including zip
       const f = C.form;
       const inputs = formDiv.querySelectorAll('.form-input[required]');
       const usesImplicitConsent = Boolean(variantConfig.implicitConsent);
+      const errorMessage = formDiv.querySelector('#submission-error');
+      errorMessage.textContent = '';
+      if (variantConfig.verifyZipOnSubmit) {
+        const zipInput = formDiv.querySelector('#zip-input');
+        const zip = zipInput.value.trim();
+        zipInput.value = zip;
+        const zipConfig = C.zipVerification || {};
+        const message = !/^\d{5}$/.test(zip) ? (zipConfig.invalidMessage || 'Enter a valid five-digit ZIP code.')
+          : !parseAllowedZipCodes(zipConfig.allowedZipCodes).has(zip) ? (zipConfig.unavailableMessage || 'That ZIP is outside our current service area.') : '';
+        if (message) {
+          errorMessage.textContent = message;
+          zipInput.style.borderColor = '#EF4444';
+          zipInput.setAttribute('aria-invalid', 'true');
+          zipInput.addEventListener('input', () => {
+            zipInput.style.borderColor = '';
+            zipInput.removeAttribute('aria-invalid');
+            errorMessage.textContent = '';
+          }, { once: true });
+          zipInput.focus();
+          return;
+        }
+      }
       let valid = true;
       inputs.forEach(inp => {
         if (!inp.value.trim()) {
@@ -1716,7 +1776,6 @@
       const btn   = formDiv.querySelector('#submit-btn');
       const label = formDiv.querySelector('#btn-label');
       const spin  = formDiv.querySelector('#spinner');
-      const errorMessage = formDiv.querySelector('#submission-error');
       errorMessage.textContent = '';
       btn.disabled = true;
       label.textContent = 'Sending…';
@@ -1727,13 +1786,16 @@
       inputs.forEach(inp => { formData[inp.name] = inp.value.trim(); });
 
       // ── Populate hidden attribution fields ─────────────────
-      let attribution = {};
+      let attribution = window.awAttribution || {};
       try {
-        attribution = JSON.parse(sessionStorage.getItem('attribution_data') || '{}');
+        attribution = JSON.parse(sessionStorage.getItem('attribution_data') || JSON.stringify(attribution));
       } catch (error) {
         console.warn('Stored attribution data was invalid and has been reset.', error);
-        sessionStorage.removeItem('attribution_data');
+        try { sessionStorage.removeItem('attribution_data'); } catch {}
       }
+      if (!attribution || typeof attribution !== 'object') attribution = window.awAttribution || {};
+      attribution.lead_event_id ||= eventId();
+      Object.assign(attribution, browserIdentifiers());
       const hiddenMap = {
         h_utm_source:    attribution.utm_source    || '',
         h_utm_medium:    attribution.utm_medium    || '',
@@ -1792,7 +1854,7 @@
         sms_consent: usesImplicitConsent || Boolean(smsCheck?.checked),
       };
 
-      if (!C.webhookUrl) {
+      if (!C.leadEndpoint) {
         errorMessage.textContent = 'Online submissions are being configured. Please try again later.';
         btn.disabled = false;
         label.textContent = f.ctaLabel;
@@ -1800,14 +1862,16 @@
         return;
       }
 
+      let ingestion;
       try {
         const webhookValues = new URLSearchParams();
         Object.entries(payload).forEach(([key, value]) => webhookValues.append(key, String(value)));
-        await fetchWithTimeout(C.webhookUrl, {
+        const response = await fetchWithTimeout(C.leadEndpoint, {
           method: 'POST',
           body: webhookValues,
-          mode: 'no-cors',
         }, WEBHOOK_TIMEOUT_MS);
+        ingestion = await response.json();
+        if (!response.ok || ingestion.ok !== true || ingestion.accepted !== true || ingestion.test !== false) throw new Error('Ingestion was not accepted');
       } catch (error) {
         console.warn('Webhook error:', error);
         errorMessage.textContent = 'We could not send your request. Please try again.';
@@ -1824,7 +1888,10 @@
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
+            event_name: trackingConfig.metaLeadEvent,
             event_id: payload.capi_event_id,
+            lead_receipt: ingestion.lead_receipt,
+            variant: funnelVariant.toUpperCase(),
             source_url: payload.source_url,
             user_agent: payload.user_agent,
             name: payload.name,

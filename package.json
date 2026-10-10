@@ -2,9 +2,10 @@
   "name": "client-a-w-fencing-quiz",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "node scripts/build-pages.mjs",
-    "check": "node --check public/config.js && node --check functions/api/capi.js && npm run build && node scripts/check-site.mjs",
+    "check": "node --check public/config.js && node --check functions/api/capi.js && node --check functions/api/lead.js && npm run build && node scripts/check-site.mjs && node --test test/*.test.mjs",
     "dev": "npm run build && wrangler pages dev dist",
     "deploy": "npm run build && wrangler pages deploy dist --project-name client-a-w-fencing-quiz --branch main"
   },

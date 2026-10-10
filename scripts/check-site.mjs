@@ -64,7 +64,7 @@ for (const needle of ["variantConfig.questionOverrides", "usesImplicitConsent ||
   if (!index.includes(needle) && !config.includes(needle)) throw new Error(`Missing route /e consent or answer wiring: ${needle}`);
 }
 
-for (const needle of ["META_CAPI_ACCESS_TOKEN", "crypto.subtle.digest", 'event_name: "Lead"', "event_id: eventId", "CF-Connecting-IP"]) {
+for (const needle of ["META_CAPI_ACCESS_TOKEN", "crypto.subtle.digest", "event_name: eventName", "event_id: eventId", "CF-Connecting-IP", "validReceipt", "if (test) payload.test_event_code"]) {
   if (!capiFunction.includes(needle)) throw new Error(`Missing server-side CAPI behavior: ${needle}`);
 }
 
@@ -72,9 +72,10 @@ for (const needle of ["fetch('/api/capi'", "event_id: payload.capi_event_id"]) {
   if (!index.includes(needle) && !index.includes("fetchWithTimeout('/api/capi'")) throw new Error(`Missing browser-to-CAPI handoff: ${needle}`);
 }
 
-for (const needle of ["WEBHOOK_TIMEOUT_MS", "CAPI_TIMEOUT_MS", "fetchWithTimeout(C.webhookUrl", "controller.abort()", "sessionStorage.removeItem('attribution_data')"]) {
+for (const needle of ["WEBHOOK_TIMEOUT_MS", "CAPI_TIMEOUT_MS", "fetchWithTimeout(C.leadEndpoint", "controller.abort()", "sessionStorage.removeItem('attribution_data')", "variantConfig.verifyZipOnSubmit", "ingestion.accepted !== true"]) {
   if (!index.includes(needle)) throw new Error(`Missing resilient submission behavior: ${needle}`);
 }
+if (config.includes('hook.eu2.make.com') || index.includes("mode: 'no-cors'")) throw new Error('Legacy direct webhook handoff remains');
 
 const submitHandler = index.slice(index.indexOf("async function handleSubmit"), index.indexOf("function renderThanks"));
 if (!submitHandler.includes("const f = C.form;")) {

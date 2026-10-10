@@ -1,0 +1,1196 @@
+{
+  "flow": [
+    {
+      "id": 2,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "a-wfencing-quiz-webhook"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 0
+        },
+        "interface": [
+          {
+            "name": "business",
+            "type": "text"
+          },
+          {
+            "name": "lead_source",
+            "type": "text"
+          },
+          {
+            "name": "funnel_variant",
+            "type": "text"
+          },
+          {
+            "name": "submitted_at",
+            "type": "text"
+          },
+          {
+            "name": "name",
+            "type": "text"
+          },
+          {
+            "name": "email",
+            "type": "text"
+          },
+          {
+            "name": "phone",
+            "type": "text"
+          },
+          {
+            "name": "zip",
+            "type": "text"
+          },
+          {
+            "name": "project_type",
+            "type": "text"
+          },
+          {
+            "name": "fence_type",
+            "type": "text"
+          },
+          {
+            "name": "property_type",
+            "type": "text"
+          },
+          {
+            "name": "top_priority",
+            "type": "text"
+          },
+          {
+            "name": "timeline",
+            "type": "text"
+          },
+          {
+            "name": "budget",
+            "type": "text"
+          },
+          {
+            "name": "utm_source",
+            "type": "text"
+          },
+          {
+            "name": "utm_medium",
+            "type": "text"
+          },
+          {
+            "name": "utm_campaign",
+            "type": "text"
+          },
+          {
+            "name": "utm_content",
+            "type": "text"
+          },
+          {
+            "name": "utm_term",
+            "type": "text"
+          },
+          {
+            "name": "ad_id",
+            "type": "text"
+          },
+          {
+            "name": "adset_id",
+            "type": "text"
+          },
+          {
+            "name": "campaign_id",
+            "type": "text"
+          },
+          {
+            "name": "fbclid",
+            "type": "text"
+          },
+          {
+            "name": "fbp",
+            "type": "text"
+          },
+          {
+            "name": "fbc",
+            "type": "text"
+          },
+          {
+            "name": "source_url",
+            "type": "text"
+          },
+          {
+            "name": "user_agent",
+            "type": "text"
+          },
+          {
+            "name": "lead_event_id",
+            "type": "text"
+          },
+          {
+            "name": "capi_event_name",
+            "type": "text"
+          },
+          {
+            "name": "capi_event_id",
+            "type": "text"
+          },
+          {
+            "name": "capi_event_time",
+            "type": "text"
+          },
+          {
+            "name": "capi_action_source",
+            "type": "text"
+          },
+          {
+            "name": "sms_consent",
+            "type": "text"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 2919251,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 3,
+      "filter": {
+        "name": "Valid lead submission",
+        "conditions": [
+          [
+            {
+              "a": "{{2.name}}",
+              "o": "exist"
+            }
+          ]
+        ]
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "https://app.houzflow.com/api/integrations/a-w-fencing/leads?business={{encodeURL(ifempty(2.business; \"\"))}}&lead_source={{encodeURL(ifempty(2.lead_source; \"\"))}}&funnel_variant={{encodeURL(ifempty(2.funnel_variant; \"\"))}}&submitted_at={{encodeURL(ifempty(2.submitted_at; \"\"))}}&name={{encodeURL(ifempty(2.name; \"\"))}}&email={{encodeURL(ifempty(2.email; \"\"))}}&phone={{encodeURL(ifempty(2.phone; \"\"))}}&zip={{encodeURL(ifempty(2.zip; \"\"))}}&project_type={{encodeURL(ifempty(2.project_type; \"\"))}}&fence_type={{encodeURL(ifempty(2.fence_type; \"\"))}}&property_type={{encodeURL(ifempty(2.property_type; \"\"))}}&top_priority={{encodeURL(ifempty(2.top_priority; \"\"))}}&timeline={{encodeURL(ifempty(2.timeline; \"\"))}}&budget={{encodeURL(ifempty(2.budget; \"\"))}}&utm_source={{encodeURL(ifempty(2.utm_source; \"\"))}}&utm_medium={{encodeURL(ifempty(2.utm_medium; \"\"))}}&utm_campaign={{encodeURL(ifempty(2.utm_campaign; \"\"))}}&utm_content={{encodeURL(ifempty(2.utm_content; \"\"))}}&utm_term={{encodeURL(ifempty(2.utm_term; \"\"))}}&ad_id={{encodeURL(ifempty(2.ad_id; \"\"))}}&adset_id={{encodeURL(ifempty(2.adset_id; \"\"))}}&campaign_id={{encodeURL(ifempty(2.campaign_id; \"\"))}}&fbclid={{encodeURL(ifempty(2.fbclid; \"\"))}}&fbp={{encodeURL(ifempty(2.fbp; \"\"))}}&fbc={{encodeURL(ifempty(2.fbc; \"\"))}}&source_url={{encodeURL(ifempty(2.source_url; \"\"))}}&user_agent={{encodeURL(ifempty(2.user_agent; \"\"))}}&lead_event_id={{encodeURL(ifempty(2.lead_event_id; \"\"))}}&capi_event_name={{encodeURL(ifempty(2.capi_event_name; \"\"))}}&capi_event_id={{encodeURL(ifempty(2.capi_event_id; \"\"))}}&capi_event_time={{encodeURL(ifempty(2.capi_event_time; \"\"))}}&capi_action_source={{encodeURL(ifempty(2.capi_action_source; \"\"))}}&sms_consent={{encodeURL(ifempty(2.sms_consent; \"\"))}}&test_mode={{encodeURL(ifempty(2.test_mode; \"\"))}}&test_signature={{encodeURL(ifempty(2.test_signature; \"\"))}}",
+        "data": "{}",
+        "gzip": true,
+        "method": "post",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "[REDACTED INGEST AUTH]"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "module": "http:ActionSendData",
+      "version": 3,
+      "metadata": {
+        "expect": [
+          {
+            "name": "url",
+            "type": "url",
+            "label": "URL",
+            "required": true
+          },
+          {
+            "name": "serializeUrl",
+            "type": "boolean",
+            "label": "Serialize URL",
+            "required": true
+          },
+          {
+            "name": "method",
+            "type": "select",
+            "label": "Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "get",
+                "head",
+                "post",
+                "put",
+                "patch",
+                "delete",
+                "options"
+              ]
+            }
+          },
+          {
+            "name": "headers",
+            "spec": [
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name",
+                "required": true
+              },
+              {
+                "name": "value",
+                "type": "text",
+                "label": "Value"
+              }
+            ],
+            "type": "array",
+            "label": "Headers"
+          },
+          {
+            "name": "qs",
+            "spec": [
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name",
+                "required": true
+              },
+              {
+                "name": "value",
+                "type": "text",
+                "label": "Value"
+              }
+            ],
+            "type": "array",
+            "label": "Query String"
+          },
+          {
+            "name": "bodyType",
+            "type": "select",
+            "label": "Body type",
+            "validate": {
+              "enum": [
+                "raw",
+                "x_www_form_urlencoded",
+                "multipart_form_data"
+              ]
+            }
+          },
+          {
+            "name": "parseResponse",
+            "type": "boolean",
+            "label": "Parse response",
+            "required": true
+          },
+          {
+            "name": "authUser",
+            "type": "text",
+            "label": "User name"
+          },
+          {
+            "name": "authPass",
+            "type": "password",
+            "label": "Password"
+          },
+          {
+            "name": "timeout",
+            "type": "uinteger",
+            "label": "Timeout",
+            "validate": {
+              "max": 300,
+              "min": 1
+            }
+          },
+          {
+            "name": "shareCookies",
+            "type": "boolean",
+            "label": "Share cookies with other HTTP modules",
+            "required": true
+          },
+          {
+            "name": "ca",
+            "type": "cert",
+            "label": "Self-signed certificate"
+          },
+          {
+            "name": "rejectUnauthorized",
+            "type": "boolean",
+            "label": "Reject connections that are using unverified (self-signed) certificates",
+            "required": true
+          },
+          {
+            "name": "followRedirect",
+            "type": "boolean",
+            "label": "Follow redirect",
+            "required": true
+          },
+          {
+            "name": "useQuerystring",
+            "type": "boolean",
+            "label": "Disable serialization of multiple same query string keys as arrays",
+            "required": true
+          },
+          {
+            "name": "gzip",
+            "type": "boolean",
+            "label": "Request compressed content",
+            "required": true
+          },
+          {
+            "name": "useMtls",
+            "type": "boolean",
+            "label": "Use Mutual TLS",
+            "required": true
+          },
+          {
+            "name": "contentType",
+            "type": "select",
+            "label": "Content type",
+            "validate": {
+              "enum": [
+                "text/plain",
+                "application/json",
+                "application/xml",
+                "text/xml",
+                "text/html",
+                "custom"
+              ]
+            }
+          },
+          {
+            "name": "data",
+            "type": "buffer",
+            "label": "Request content"
+          },
+          {
+            "name": "followAllRedirects",
+            "type": "boolean",
+            "label": "Follow all redirect",
+            "required": true
+          }
+        ],
+        "restore": {
+          "expect": {
+            "qs": {
+              "mode": "chose"
+            },
+            "method": {
+              "mode": "chose",
+              "label": "POST"
+            },
+            "headers": {
+              "mode": "chose",
+              "items": [
+                null
+              ]
+            },
+            "bodyType": {
+              "label": "Raw"
+            },
+            "contentType": {
+              "label": "JSON (application/json)"
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": 300,
+          "y": 0
+        },
+        "parameters": [
+          {
+            "name": "handleErrors",
+            "type": "boolean",
+            "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+            "required": true
+          },
+          {
+            "name": "useNewZLibDeCompress",
+            "type": "hidden"
+          }
+        ]
+      },
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      }
+    },
+    {
+      "id": 9,
+      "mapper": {
+        "body": "{{3.data.receipt_json}}",
+        "status": "{{3.statusCode}}",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "module": "gateway:WebhookRespond",
+      "version": 1,
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        }
+      },
+      "parameters": {}
+    },
+    {
+      "id": 4,
+      "filter": {
+        "name": "Only newly accepted production leads",
+        "conditions": [
+          [
+            {
+              "a": "{{3.statusCode}}",
+              "b": "201",
+              "o": "number:equal"
+            },
+            {
+              "a": "{{3.data.notify_eligible}}",
+              "b": "yes",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{3.data.test}}",
+              "b": false,
+              "o": "boolean:equal"
+            }
+          ]
+        ]
+      },
+      "mapper": {
+        "to": [
+          "sidbhand@gmail.com",
+          "cwaltr2@gmail.com",
+          "Austinrobertson362@gmail.com"
+        ],
+        "from": "\"Contact\" <contact@houzflow.com>",
+        "content": "<h2>New A&amp;W Fencing Lead</h2><p>A new quiz lead was inserted into the Houzflow Client App.</p><table cellpadding=\"6\" cellspacing=\"0\" border=\"0\"><tr><td><strong>Name</strong></td><td>{{2.name}}</td></tr><tr><td><strong>Phone</strong></td><td>{{2.phone}}</td></tr><tr><td><strong>Email</strong></td><td>{{2.email}}</td></tr><tr><td><strong>ZIP</strong></td><td>{{2.zip}}</td></tr><tr><td><strong>Fence type</strong></td><td>{{2.fence_type}}</td></tr><tr><td><strong>Property</strong></td><td>{{2.property_type}}</td></tr><tr><td><strong>Priority</strong></td><td>{{2.top_priority}}</td></tr><tr><td><strong>Timeline</strong></td><td>{{2.timeline}}</td></tr><tr><td><strong>Budget</strong></td><td>{{2.budget}}</td></tr><tr><td><strong>Funnel</strong></td><td>{{2.funnel_variant}}</td></tr><tr><td><strong>Campaign</strong></td><td>{{2.utm_campaign}}</td></tr></table><p><a href=\"https://app.houzflow.com\">Open Houzflow Client App</a></p>",
+        "subject": "New A&W Fencing lead: {{2.name}}",
+        "bodyType": "rawHtml"
+      },
+      "module": "google-email:sendAnEmail",
+      "version": 4,
+      "metadata": {
+        "expect": [
+          {
+            "name": "to",
+            "spec": {
+              "name": "value",
+              "type": "email",
+              "label": "Recipient email address",
+              "required": true,
+              "validate": true
+            },
+            "type": "array",
+            "label": "To",
+            "required": true
+          },
+          {
+            "name": "subject",
+            "type": "text",
+            "label": "Subject"
+          },
+          {
+            "name": "bodyType",
+            "type": "select",
+            "label": "Body type",
+            "required": true,
+            "validate": {
+              "enum": [
+                "rawHtml",
+                "collection"
+              ]
+            }
+          },
+          {
+            "name": "attachments",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "filename",
+                  "type": "filename",
+                  "label": "File name",
+                  "required": true,
+                  "semantic": "file:name"
+                },
+                {
+                  "name": "data",
+                  "type": "buffer",
+                  "label": "Data",
+                  "required": true,
+                  "semantic": "file:data"
+                }
+              ],
+              "type": "collection",
+              "label": "Attachment"
+            },
+            "type": "array",
+            "label": "Attachments"
+          },
+          {
+            "name": "from",
+            "type": "select",
+            "label": "From"
+          },
+          {
+            "name": "cc",
+            "spec": {
+              "name": "value",
+              "type": "email",
+              "label": "Recipient email address"
+            },
+            "type": "array",
+            "label": "CC recipients"
+          },
+          {
+            "name": "bcc",
+            "spec": {
+              "name": "value",
+              "type": "email",
+              "label": "Recipient email address"
+            },
+            "type": "array",
+            "label": "BCC recipients"
+          },
+          {
+            "name": "emailHeaders",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "key",
+                  "type": "text",
+                  "label": "Key",
+                  "required": true
+                },
+                {
+                  "name": "value",
+                  "type": "text",
+                  "label": "Value"
+                }
+              ],
+              "type": "collection",
+              "label": "Email header"
+            },
+            "type": "array",
+            "label": "Additional email headers"
+          },
+          {
+            "name": "content",
+            "type": "text",
+            "label": "Content"
+          }
+        ],
+        "restore": {
+          "expect": {
+            "cc": {
+              "mode": "chose"
+            },
+            "to": {
+              "mode": "chose",
+              "items": [
+                null,
+                null,
+                null
+              ]
+            },
+            "bcc": {
+              "mode": "chose"
+            },
+            "from": {
+              "mode": "chose",
+              "label": "\"Contact\" <contact@houzflow.com>"
+            },
+            "bodyType": {
+              "label": "Raw HTML"
+            },
+            "attachments": {
+              "mode": "chose"
+            },
+            "emailHeaders": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "google-email"
+              },
+              "label": "Sid's Gmail connection (sidbhand@houzflow.com)"
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": 900,
+          "y": 0
+        },
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:google-email",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 9159209
+      }
+    },
+    {
+      "id": 6,
+      "mapper": {
+        "from": "drive",
+        "mode": "select",
+        "values": {
+          "0": "{{2.submitted_at}}",
+          "1": "{{2.name}}",
+          "2": "{{2.email}}",
+          "3": "{{2.phone}}",
+          "4": "{{2.zip}}",
+          "5": "{{2.fence_type}}, {{2.property_type}}, {{2.top_priority}}, {{2.timeline}}, {{2.budget}}, ",
+          "6": "{{2.utm_source}}, {{2.utm_medium}}, {{2.utm_campaign}},{{2.utm_content}}, {{2.utm_term}}, {{2.ad_id}}, {{2.adset_id}}, {{2.campaign_id}}, {{2.fbclid}}, {{2.fbp}}, {{2.fbc}},{{2.source_url}},{{2.user_agent}}, {{2.lead_event_id}}, {{2.capi_event_name}}, {{2.capi_event_id}}, {{2.capi_event_time}}, {{2.capi_action_source}},",
+          "7": "{{2.sms_consent}}"
+        },
+        "sheetId": "Sheet1",
+        "spreadsheetId": "/1DPNWjy0oGDQsJ3pvjxSkXzt7Zr5iAFDv/15T8k1MWU1JXp5duLjnJI4POjV4OSTRT-/1743cS8I85kfR6YAZA3kljEvbUqL4tvESDV0rWgastBs",
+        "includesHeaders": true,
+        "insertDataOption": "INSERT_ROWS",
+        "useColumnHeaders": false,
+        "valueInputOption": "USER_ENTERED",
+        "insertUnformatted": false
+      },
+      "module": "google-sheets:addRow",
+      "version": 2,
+      "metadata": {
+        "expect": [
+          {
+            "name": "mode",
+            "type": "select",
+            "label": "Search Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "select",
+                "fromAll",
+                "map"
+              ]
+            }
+          },
+          {
+            "name": "insertUnformatted",
+            "type": "boolean",
+            "label": "Unformatted",
+            "required": true
+          },
+          {
+            "name": "valueInputOption",
+            "type": "select",
+            "label": "Value input option",
+            "required": true,
+            "validate": {
+              "enum": [
+                "USER_ENTERED",
+                "RAW"
+              ]
+            }
+          },
+          {
+            "name": "insertDataOption",
+            "type": "select",
+            "label": "Insert data option",
+            "validate": {
+              "enum": [
+                "INSERT_ROWS",
+                "OVERWRITE"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "type": "select",
+            "label": "Drive",
+            "required": true,
+            "validate": {
+              "enum": [
+                "drive",
+                "share",
+                "team"
+              ]
+            }
+          },
+          {
+            "name": "spreadsheetId",
+            "type": "file",
+            "label": "Spreadsheet Name",
+            "required": true
+          },
+          {
+            "name": "sheetId",
+            "type": "select",
+            "label": "Sheet Name",
+            "required": true
+          },
+          {
+            "name": "includesHeaders",
+            "type": "select",
+            "label": "Table contains headers",
+            "required": true,
+            "validate": {
+              "enum": [
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "name": "useColumnHeaders",
+            "type": "select",
+            "label": "Use column headers as IDs of the columns",
+            "required": true,
+            "validate": {
+              "enum": [
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "name": "values",
+            "spec": [
+              {
+                "name": "0",
+                "type": "text",
+                "label": "Submitted At (A)"
+              },
+              {
+                "name": "1",
+                "type": "text",
+                "label": "Name (B)"
+              },
+              {
+                "name": "2",
+                "type": "text",
+                "label": "Email (C)"
+              },
+              {
+                "name": "3",
+                "type": "text",
+                "label": "Phone  (D)"
+              },
+              {
+                "name": "4",
+                "type": "text",
+                "label": "Zip (E)"
+              },
+              {
+                "name": "5",
+                "type": "text",
+                "label": "Questions (F)"
+              },
+              {
+                "name": "6",
+                "type": "text",
+                "label": "Other (G)"
+              },
+              {
+                "name": "7",
+                "type": "text",
+                "label": "Consent (H)"
+              },
+              {
+                "name": "8",
+                "type": "text",
+                "label": "(I)"
+              },
+              {
+                "name": "9",
+                "type": "text",
+                "label": "(J)"
+              },
+              {
+                "name": "10",
+                "type": "text",
+                "label": "(K)"
+              },
+              {
+                "name": "11",
+                "type": "text",
+                "label": "(L)"
+              },
+              {
+                "name": "12",
+                "type": "text",
+                "label": "(M)"
+              },
+              {
+                "name": "13",
+                "type": "text",
+                "label": "(N)"
+              },
+              {
+                "name": "14",
+                "type": "text",
+                "label": "(O)"
+              },
+              {
+                "name": "15",
+                "type": "text",
+                "label": "(P)"
+              },
+              {
+                "name": "16",
+                "type": "text",
+                "label": "(Q)"
+              },
+              {
+                "name": "17",
+                "type": "text",
+                "label": "(R)"
+              },
+              {
+                "name": "18",
+                "type": "text",
+                "label": "(S)"
+              },
+              {
+                "name": "19",
+                "type": "text",
+                "label": "(T)"
+              },
+              {
+                "name": "20",
+                "type": "text",
+                "label": "(U)"
+              },
+              {
+                "name": "21",
+                "type": "text",
+                "label": "(V)"
+              },
+              {
+                "name": "22",
+                "type": "text",
+                "label": "(W)"
+              },
+              {
+                "name": "23",
+                "type": "text",
+                "label": "(X)"
+              },
+              {
+                "name": "24",
+                "type": "text",
+                "label": "(Y)"
+              },
+              {
+                "name": "25",
+                "type": "text",
+                "label": "(Z)"
+              }
+            ],
+            "type": "collection",
+            "label": "Values in columns",
+            "metadata": [
+              [
+                [
+                  "Submitted At",
+                  "Name",
+                  "Email",
+                  "Phone ",
+                  "Zip",
+                  "Questions",
+                  "Other",
+                  "Consent"
+                ]
+              ]
+            ]
+          }
+        ],
+        "restore": {
+          "expect": {
+            "from": {
+              "label": "My Drive"
+            },
+            "mode": {
+              "label": "Search by path"
+            },
+            "sheetId": {
+              "label": "Sheet1"
+            },
+            "spreadsheetId": {
+              "path": [
+                "Clients",
+                "A & W Fencing LLC",
+                "A&W Fencing Lead Sheet"
+              ]
+            },
+            "includesHeaders": {
+              "label": "Yes"
+            },
+            "insertDataOption": {
+              "mode": "chose",
+              "label": "Insert rows"
+            },
+            "useColumnHeaders": {
+              "label": "No"
+            },
+            "valueInputOption": {
+              "mode": "chose",
+              "label": "User entered"
+            },
+            "insertUnformatted": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "google"
+              },
+              "label": "Sid - Houzflow (sidbhand@houzflow.com)"
+            }
+          }
+        },
+        "designer": {
+          "x": 1200,
+          "y": 0
+        },
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:google",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 9142291
+      }
+    },
+    {
+      "id": 8,
+      "mapper": {
+        "text": ":bell: *New Lead Notification — A&W Fencing*\n\n*Name:* {{2.name}}\n*Phone:* {{2.phone}}\n*Email:* {{2.email}}\n*ZIP:* {{2.zip}}\n\n*Project Type* {{2.project_type}}\n*Fence Type:* {{2.fence_type}}\n*Property Type:* {{2.property_type}}\n*Top Priority:* {{2.top_priority}}\n*Timeline:* {{2.timeline}}\n*Budget:* {{2.budget}}\n\n*Lead Source:* {{2.lead_source}}\n*Funnel Variant:* {{2.funnel_variant}}\n*Submitted:* {{2.submitted_at}}",
+        "parse": false,
+        "mrkdwn": true,
+        "channel": "C0C05LXGR7F",
+        "username": "LeadBot",
+        "channelType": "private",
+        "channelWType": "list"
+      },
+      "module": "slack:CreateMessage",
+      "version": 4,
+      "metadata": {
+        "expect": [
+          {
+            "name": "channelWType",
+            "type": "select",
+            "label": "Enter a channel ID or name",
+            "required": true,
+            "validate": {
+              "enum": [
+                "manualy",
+                "list"
+              ]
+            }
+          },
+          {
+            "name": "text",
+            "type": "text",
+            "label": "Text"
+          },
+          {
+            "name": "blocks",
+            "type": "text",
+            "label": "Blocks"
+          },
+          {
+            "name": "thread_ts",
+            "type": "text",
+            "label": "Thread message ID (time stamp)"
+          },
+          {
+            "name": "reply_broadcast",
+            "type": "boolean",
+            "label": "Reply broadcast"
+          },
+          {
+            "name": "link_names",
+            "type": "boolean",
+            "label": "Link names"
+          },
+          {
+            "name": "parse",
+            "type": "boolean",
+            "label": "Parse message text"
+          },
+          {
+            "name": "mrkdwn",
+            "type": "boolean",
+            "label": "Use markdown"
+          },
+          {
+            "name": "unfurl_links",
+            "type": "boolean",
+            "label": "Unfurl primarily text-based content"
+          },
+          {
+            "name": "unfurl_media",
+            "type": "boolean",
+            "label": "Unfurl media content"
+          },
+          {
+            "name": "icon_emoji",
+            "type": "text",
+            "label": "Icon emoji"
+          },
+          {
+            "name": "icon_url",
+            "type": "url",
+            "label": "Icon url"
+          },
+          {
+            "name": "username",
+            "type": "text",
+            "label": "User name"
+          },
+          {
+            "name": "channelType",
+            "type": "select",
+            "label": "Channel type",
+            "required": true,
+            "validate": {
+              "enum": [
+                "public",
+                "private",
+                "im",
+                "mpim"
+              ]
+            }
+          },
+          {
+            "name": "channel",
+            "type": "select",
+            "label": "Private channel",
+            "required": true
+          }
+        ],
+        "restore": {
+          "expect": {
+            "parse": {
+              "mode": "chose"
+            },
+            "mrkdwn": {
+              "mode": "chose"
+            },
+            "channel": {
+              "mode": "chose",
+              "label": "a-w-fencing"
+            },
+            "link_names": {
+              "mode": "chose"
+            },
+            "channelType": {
+              "label": "Private channel"
+            },
+            "channelWType": {
+              "label": "Select from the list"
+            },
+            "unfurl_links": {
+              "mode": "chose"
+            },
+            "unfurl_media": {
+              "mode": "chose"
+            },
+            "reply_broadcast": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "slack3"
+              },
+              "label": "Sid's Slack (bot) connection"
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": 1500,
+          "y": 0
+        },
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:slack2,slack3",
+            "label": "Connection",
+            "required": true
+          }
+        ],
+        "setupValidation": {
+          "result": {
+            "valid": true,
+            "fields": []
+          },
+          "version": 1,
+          "configuration": "6c1a117faf4ec000"
+        }
+      },
+      "parameters": {
+        "__IMTCONN__": 11284734
+      }
+    }
+  ],
+  "name": "A&W Fencing Quiz to Houzflow Leads — Main Account",
+  "metadata": {
+    "zone": "eu2.make.com",
+    "notes": [],
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": []
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  }
+}
