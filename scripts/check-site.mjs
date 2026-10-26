@@ -47,7 +47,7 @@ if (allowedZipCodes.some(zip => !/^\d{5}$/.test(zip))) {
   throw new Error("The reporting reference contains an invalid ZIP code.");
 }
 
-for (const needle of ["renderZipGate", "answers.project_type", "variantConfig.zipFirst"]) {
+for (const needle of ["renderZipGate", "parseAllowedZipCodes", "answers.project_type", "variantConfig.zipFirst"]) {
   if (!index.includes(needle)) throw new Error(`Missing route /d behavior: ${needle}`);
 }
 

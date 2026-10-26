@@ -31,7 +31,7 @@ window.CONFIG = {
 
   // Funnel presentation is controlled here rather than in the page markup.
   // /a = lander plus proof, /b = lander only, /c = questions immediately.
-  // /d = ZIP collection, project type, fence type, then the lead form.
+  // /d = ZIP verification, project type, fence type, then the lead form.
   // /e = project type, fence type, then the lead form with ZIP collection.
   variants: {
     a: { name: "Lander + proof", showLander: true, showProof: true },
@@ -62,11 +62,11 @@ window.CONFIG = {
     }
   },
 
-  // Keep the approved service-area list as a reporting reference only.
-  // No quiz route validates ZIP format or blocks submissions against this list.
+  // Route /d uses this approved ZIP list for its ZIP-first service-area check.
+  // Route /e collects the project ZIP without format or service-area validation.
   zipVerification: {
     allowedZipCodes: "27013, 27020, 27028, 27054, 27055, 28006, 28012, 28016, 28021, 28023, 28025, 28027, 28031, 28032, 28033, 28034, 28036, 28037, 28039, 28052, 28054, 28056, 28071, 28072, 28075, 28077, 28078, 28080, 28081, 28083, 28086, 28088, 28090, 28092, 28097, 28098, 28101, 28104, 28105, 28107, 28115, 28117, 28120, 28124, 28125, 28127, 28134, 28137, 28138, 28144, 28146, 28147, 28159, 28164, 28166, 28168, 28202, 28203, 28204, 28205, 28206, 28207, 28208, 28209, 28210, 28211, 28212, 28213, 28214, 28215, 28216, 28217, 28223, 28226, 28227, 28244, 28246, 28254, 28262, 28269, 28270, 28273, 28274, 28277, 28278, 28280, 28281, 28282, 28284, 28285, 28287, 28601, 28602, 28609, 28610, 28612, 28613, 28625, 28634, 28636, 28637, 28650, 28658, 28660, 28673, 28677, 28678, 28682, 28689",
-    eyebrow: "First, tell us about your project",
+    eyebrow: "First, let's check your area",
     headline: "What's your project ZIP code?",
     subtext: "Enter the ZIP code where the fence project will take place.",
     label: "Enter your Zip Code",
@@ -75,9 +75,10 @@ window.CONFIG = {
       "Residential, commercial & agricultural fencing",
       "Free estimates with no obligation"
     ],
-    placeholder: "ZIP code",
-    ctaLabel: "Continue",
-    emptyMessage: "Enter your project ZIP code."
+    placeholder: "5-digit ZIP code",
+    ctaLabel: "Check Availability",
+    invalidMessage: "Enter a valid five-digit ZIP code.",
+    unavailableMessage: "That ZIP is outside our current service list. Call us if your project is nearby."
   },
 
   defaultQuestionIds: ["fence_type", "property_type", "top_priority", "timeline", "budget"],

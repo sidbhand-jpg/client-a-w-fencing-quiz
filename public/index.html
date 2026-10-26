@@ -1467,6 +1467,10 @@
     });
 
     // ── QUESTION SCREEN ───────────────────────────────────────
+    function parseAllowedZipCodes(value) {
+      return new Set(String(value || '').split(',').map(zip => zip.trim()).filter(Boolean));
+    }
+
     function renderZipGate() {
       const zipConfig = C.zipVerification || {};
       const details = Array.isArray(zipConfig.details) ? zipConfig.details : [];
@@ -1483,7 +1487,7 @@
       const div = document.createElement('div');
       div.className = 'screen';
       div.innerHTML = `
-        <p class="form-eyebrow text-center">${zipConfig.eyebrow || 'Tell us about your project'}</p>
+        <p class="form-eyebrow text-center">${zipConfig.eyebrow || 'Check your area'}</p>
         <h2 class="form-headline text-center">${zipConfig.headline || "What's your project ZIP code?"}</h2>
         <p class="form-sub text-center">${zipConfig.subtext || ''}</p>
         ${detailsHTML}
@@ -1495,27 +1499,35 @@
             type="text"
             name="zip"
             id="zip-gate-input"
-            placeholder="${zipConfig.placeholder || 'ZIP code'}"
+            placeholder="${zipConfig.placeholder || '5-digit ZIP code'}"
             inputmode="numeric"
-            maxlength="10"
+            pattern="[0-9]{5}"
+            maxlength="5"
             required
             autocomplete="postal-code"
+            value="${answers.zip || ''}"
           />
         </div>
         <p class="submission-error" id="zip-error" role="alert" aria-live="polite"></p>
-        <button class="btn-primary" id="zip-submit-btn">${zipConfig.ctaLabel || 'Continue'}</button>
+        <button class="btn-primary" id="zip-submit-btn">${zipConfig.ctaLabel || 'Check Availability'}</button>
       `;
       container.appendChild(div);
 
       const input = div.querySelector('#zip-gate-input');
-      input.value = answers.zip || '';
       const error = div.querySelector('#zip-error');
       const submit = () => {
         const zip = input.value.trim();
+        const allowedZipCodes = parseAllowedZipCodes(zipConfig.allowedZipCodes);
         error.textContent = '';
         input.style.borderColor = '';
-        if (!zip) {
-          error.textContent = zipConfig.emptyMessage || 'Enter your project ZIP code.';
+        if (!/^\d{5}$/.test(zip)) {
+          error.textContent = zipConfig.invalidMessage || 'Enter a valid five-digit ZIP code.';
+          input.style.borderColor = '#EF4444';
+          input.focus();
+          return;
+        }
+        if (!allowedZipCodes.has(zip)) {
+          error.textContent = zipConfig.unavailableMessage || 'That ZIP is outside our current service area.';
           input.style.borderColor = '#EF4444';
           input.focus();
           return;

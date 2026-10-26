@@ -90,8 +90,8 @@ function formHarness(zip, accepted = true, variant = 'e') {
   return { submit: () => submit(form), fields, elements, requests, pixels, rendered };
 }
 
-test('quiz collects ZIPs without format or service-area restrictions and preserves confirmed submission', async () => {
-  for (const variant of ['a', 'b', 'c', 'd', 'e']) {
+test('Route E collects ZIPs without format or service-area restrictions and preserves other contact routes', async () => {
+  for (const variant of ['a', 'b', 'c', 'e']) {
     for (const zip of ['90210', 'abcde', '2803', '28031-1234', ' 28031 ']) {
       const h = formHarness(zip, true, variant); await h.submit();
       assert.equal(h.requests[0].url, '/api/lead');
