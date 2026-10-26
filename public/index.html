@@ -1500,7 +1500,6 @@
             maxlength="10"
             required
             autocomplete="postal-code"
-            value="${answers.zip || ''}"
           />
         </div>
         <p class="submission-error" id="zip-error" role="alert" aria-live="polite"></p>
@@ -1509,6 +1508,7 @@
       container.appendChild(div);
 
       const input = div.querySelector('#zip-gate-input');
+      input.value = answers.zip || '';
       const error = div.querySelector('#zip-error');
       const submit = () => {
         const zip = input.value.trim();
