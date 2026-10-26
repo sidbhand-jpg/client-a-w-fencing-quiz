@@ -38,16 +38,16 @@ for (const needle of ["allowedZipCodes", 'label: "Enter your Zip Code"', 'questi
 }
 
 const allowedZipMatch = config.match(/allowedZipCodes:\s*"([0-9, ]+)"/);
-if (!allowedZipMatch) throw new Error("Missing comma-separated ZIP allowlist.");
+if (!allowedZipMatch) throw new Error("Missing reference service-area ZIP list.");
 const allowedZipCodes = allowedZipMatch[1].split(",").map(zip => zip.trim()).filter(Boolean);
 if (allowedZipCodes.length !== 109 || new Set(allowedZipCodes).size !== 109) {
-  throw new Error("Route /d must have exactly 109 unique approved ZIP codes.");
+  throw new Error("The reporting reference must retain its 109 unique approved ZIP codes.");
 }
 if (allowedZipCodes.some(zip => !/^\d{5}$/.test(zip))) {
-  throw new Error("Route /d contains an invalid ZIP code.");
+  throw new Error("The reporting reference contains an invalid ZIP code.");
 }
 
-for (const needle of ["renderZipGate", "parseAllowedZipCodes", "answers.project_type", "variantConfig.zipFirst"]) {
+for (const needle of ["renderZipGate", "answers.project_type", "variantConfig.zipFirst"]) {
   if (!index.includes(needle)) throw new Error(`Missing route /d behavior: ${needle}`);
 }
 
@@ -72,7 +72,7 @@ for (const needle of ["fetch('/api/capi'", "event_id: payload.capi_event_id"]) {
   if (!index.includes(needle) && !index.includes("fetchWithTimeout('/api/capi'")) throw new Error(`Missing browser-to-CAPI handoff: ${needle}`);
 }
 
-for (const needle of ["WEBHOOK_TIMEOUT_MS", "CAPI_TIMEOUT_MS", "fetchWithTimeout(C.leadEndpoint", "controller.abort()", "sessionStorage.removeItem('attribution_data')", "variantConfig.verifyZipOnSubmit", "ingestion.accepted !== true"]) {
+for (const needle of ["WEBHOOK_TIMEOUT_MS", "CAPI_TIMEOUT_MS", "fetchWithTimeout(C.leadEndpoint", "controller.abort()", "sessionStorage.removeItem('attribution_data')", "ingestion.accepted !== true"]) {
   if (!index.includes(needle)) throw new Error(`Missing resilient submission behavior: ${needle}`);
 }
 if (config.includes('hook.eu2.make.com') || index.includes("mode: 'no-cors'")) throw new Error('Legacy direct webhook handoff remains');

@@ -25,8 +25,8 @@ test('lead proxy requires an explicit matching receipt and rejects unsigned test
     assert.equal((await lead({ request: request('lead', stripped), env })).status, 403);
     assert.equal(calls, 1);
     const outside = { ...value, zip: '90210' }; outside.test_signature = await sign(testMessage(outside), env.AW_TEST_SIGNING_KEY);
-    assert.equal((await lead({ request: request('lead', outside), env })).status, 400);
-    assert.equal(calls, 1);
+    assert.equal((await lead({ request: request('lead', outside), env })).status, 200);
+    assert.equal(calls, 2);
     globalThis.fetch = async () => new Response('Accepted');
     assert.equal((await lead({ request: request('lead', value), env })).status, 502);
     const originalTimer = globalThis.setTimeout;
@@ -82,7 +82,6 @@ function formHarness(zip, accepted = true, variant = 'e') {
   const scope = { C: config, trackingConfig: config.tracking, variantConfig: config.variants[variant], funnelVariant: variant, answers: { project_type: 'New fence', fence_type: 'Wood privacy fence' },
     window: { awAttribution: { lead_event_id: 'evt_mock_browser' }, location: { href: 'https://quiz.example/e/' } }, navigator: { userAgent: 'test' },
     sessionStorage: { getItem: () => null }, eventId: () => 'evt_fallback', browserIdentifiers: () => ({ fbp: 'fb.1.123.456', fbc: '' }),
-    parseAllowedZipCodes: value => new Set(String(value || '').split(',').map(zip => zip.trim()).filter(Boolean)),
     WEBHOOK_TIMEOUT_MS: 12000, CAPI_TIMEOUT_MS: 5000, THANKS_STEP: 4, currentStep: 3, URLSearchParams, console: { warn() {} },
     fbq: (...args) => pixels.push(args), renderStep: step => rendered.push(step),
     fetchWithTimeout: async (url, options) => { requests.push({ url, options }); return url === '/api/lead' ? new Response(JSON.stringify({ ok: accepted, accepted, test: false, lead_receipt: { signature: 'mock' } }), { status: accepted ? 200 : 502 }) : new Response('{}'); },
@@ -91,17 +90,16 @@ function formHarness(zip, accepted = true, variant = 'e') {
   return { submit: () => submit(form), fields, elements, requests, pixels, rendered };
 }
 
-test('Path E blocks malformed and out-of-area ZIPs before requests or conversions', async () => {
-  for (const zip of ['', '90210', 'abcde', '2803', '28031-1234']) {
-    const h = formHarness(zip); await h.submit();
-    assert.equal(h.requests.length, 0); assert.equal(h.pixels.length, 0); assert.equal(h.rendered.length, 0);
-    assert.ok(h.elements['#submission-error'].textContent); assert.equal(h.fields[0].value, 'Mock Contact'); assert.equal(h.fields[3].focused, true);
+test('quiz collects ZIPs without format or service-area restrictions and preserves confirmed submission', async () => {
+  for (const variant of ['a', 'b', 'c', 'd', 'e']) {
+    for (const zip of ['90210', 'abcde', '2803', '28031-1234', ' 28031 ']) {
+      const h = formHarness(zip, true, variant); await h.submit();
+      assert.equal(h.requests[0].url, '/api/lead');
+      assert.equal(new URLSearchParams(h.requests[0].options.body).get('zip'), zip.trim());
+      assert.equal(h.pixels.length, 1); assert.equal(h.rendered.length, 1);
+    }
   }
-  for (const zip of config.zipVerification.allowedZipCodes.split(',').map(x => x.trim())) {
-    const h = formHarness(zip); await h.submit(); assert.equal(h.requests[0].url, '/api/lead'); assert.equal(h.pixels.length, 1);
-  }
-  const h = formHarness(' 28031 '); await h.submit(); assert.equal(h.fields[3].value, '28031');
+  const empty = formHarness(''); await empty.submit(); assert.equal(empty.requests.length, 0);
   const failed = formHarness('28031', false); await failed.submit(); assert.equal(failed.requests.length, 1); assert.equal(failed.pixels.length, 0); assert.equal(failed.elements['#submit-btn'].disabled, false);
-  failed.fields[3].value = '90210'; await failed.submit(); assert.equal(failed.requests.length, 1);
-  for (const variant of ['a', 'b', 'c']) { const other = formHarness('90210', true, variant); await other.submit(); assert.equal(other.requests.length, 2); }
+  failed.fields[3].value = '90210'; await failed.submit(); assert.equal(failed.requests.length, 2); assert.equal(failed.pixels.length, 0);
 });

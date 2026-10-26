@@ -1,5 +1,4 @@
 import { json, hasTestMarker, validTest, issueReceipt } from '../_lib/security.js';
-import { allowedZipCodes } from '../_lib/serviceArea.js';
 
 export async function onRequestPost({ request, env }) {
   if (request.headers.get('origin') !== new URL(request.url).origin) return json({ ok: false, error: 'Origin not allowed' }, 403);
@@ -9,10 +8,7 @@ export async function onRequestPost({ request, env }) {
   catch { return json({ ok: false, error: 'Invalid form' }, 400); }
   const test = hasTestMarker(body);
   if (test && !(await validTest(body, env.AW_TEST_SIGNING_KEY))) return json({ ok: false, error: 'Unauthorized test submission' }, 403);
-  if (String(body.funnel_variant).toUpperCase() === 'E') {
-    body.zip = String(body.zip || '').trim();
-    if (!/^\d{5}$/.test(body.zip) || !allowedZipCodes.has(body.zip)) return json({ ok: false, error: 'Please enter a valid ZIP in our service area.' }, 400);
-  }
+  body.zip = String(body.zip || '').trim();
   if (!body.name?.trim() || !body.email?.trim() || !body.phone?.trim() || !/^evt_[A-Za-z0-9_]+$/.test(body.lead_event_id || '')) {
     return json({ ok: false, error: 'Contact details and event ID are required' }, 400);
   }

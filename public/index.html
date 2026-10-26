@@ -1467,10 +1467,6 @@
     });
 
     // ── QUESTION SCREEN ───────────────────────────────────────
-    function parseAllowedZipCodes(value) {
-      return new Set(String(value || '').split(',').map(zip => zip.trim()).filter(Boolean));
-    }
-
     function renderZipGate() {
       const zipConfig = C.zipVerification || {};
       const details = Array.isArray(zipConfig.details) ? zipConfig.details : [];
@@ -1487,7 +1483,7 @@
       const div = document.createElement('div');
       div.className = 'screen';
       div.innerHTML = `
-        <p class="form-eyebrow text-center">${zipConfig.eyebrow || 'Check your area'}</p>
+        <p class="form-eyebrow text-center">${zipConfig.eyebrow || 'Tell us about your project'}</p>
         <h2 class="form-headline text-center">${zipConfig.headline || "What's your project ZIP code?"}</h2>
         <p class="form-sub text-center">${zipConfig.subtext || ''}</p>
         ${detailsHTML}
@@ -1499,17 +1495,16 @@
             type="text"
             name="zip"
             id="zip-gate-input"
-            placeholder="${zipConfig.placeholder || '5-digit ZIP code'}"
+            placeholder="${zipConfig.placeholder || 'ZIP code'}"
             inputmode="numeric"
-            pattern="[0-9]{5}"
-            maxlength="5"
+            maxlength="10"
             required
             autocomplete="postal-code"
             value="${answers.zip || ''}"
           />
         </div>
         <p class="submission-error" id="zip-error" role="alert" aria-live="polite"></p>
-        <button class="btn-primary" id="zip-submit-btn">${zipConfig.ctaLabel || 'Check Availability'}</button>
+        <button class="btn-primary" id="zip-submit-btn">${zipConfig.ctaLabel || 'Continue'}</button>
       `;
       container.appendChild(div);
 
@@ -1517,17 +1512,10 @@
       const error = div.querySelector('#zip-error');
       const submit = () => {
         const zip = input.value.trim();
-        const allowedZipCodes = parseAllowedZipCodes(zipConfig.allowedZipCodes);
         error.textContent = '';
         input.style.borderColor = '';
-        if (!/^\d{5}$/.test(zip)) {
-          error.textContent = zipConfig.invalidMessage || 'Enter a valid five-digit ZIP code.';
-          input.style.borderColor = '#EF4444';
-          input.focus();
-          return;
-        }
-        if (!allowedZipCodes.has(zip)) {
-          error.textContent = zipConfig.unavailableMessage || 'That ZIP is outside our current service area.';
+        if (!zip) {
+          error.textContent = zipConfig.emptyMessage || 'Enter your project ZIP code.';
           input.style.borderColor = '#EF4444';
           input.focus();
           return;
@@ -1655,7 +1643,6 @@
               placeholder="${f.zipPlaceholder}"
               inputmode="numeric"
               maxlength="10"
-              ${variantConfig.verifyZipOnSubmit ? 'pattern="[0-9]{5}" aria-describedby="submission-error"' : ''}
               required
               autocomplete="postal-code"
             />
@@ -1735,26 +1722,6 @@
       const usesImplicitConsent = Boolean(variantConfig.implicitConsent);
       const errorMessage = formDiv.querySelector('#submission-error');
       errorMessage.textContent = '';
-      if (variantConfig.verifyZipOnSubmit) {
-        const zipInput = formDiv.querySelector('#zip-input');
-        const zip = zipInput.value.trim();
-        zipInput.value = zip;
-        const zipConfig = C.zipVerification || {};
-        const message = !/^\d{5}$/.test(zip) ? (zipConfig.invalidMessage || 'Enter a valid five-digit ZIP code.')
-          : !parseAllowedZipCodes(zipConfig.allowedZipCodes).has(zip) ? (zipConfig.unavailableMessage || 'That ZIP is outside our current service area.') : '';
-        if (message) {
-          errorMessage.textContent = message;
-          zipInput.style.borderColor = '#EF4444';
-          zipInput.setAttribute('aria-invalid', 'true');
-          zipInput.addEventListener('input', () => {
-            zipInput.style.borderColor = '';
-            zipInput.removeAttribute('aria-invalid');
-            errorMessage.textContent = '';
-          }, { once: true });
-          zipInput.focus();
-          return;
-        }
-      }
       let valid = true;
       inputs.forEach(inp => {
         if (!inp.value.trim()) {

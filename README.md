@@ -23,10 +23,10 @@ Variant behavior lives in `public/config.js` under `CONFIG.variants`.
 | `/a`        | Lander followed by gallery and review/proof sections  | Information-rich experience |
 | `/b` or `/` | Lander only, with no information below the first fold | Focused landing experience  |
 | `/c`        | Opens directly on question one                        | Lowest-friction experience  |
-| `/d`        | ZIP check, project type, fence type, then lead form    | Short qualified-lead path   |
-| `/e`        | Project type, fence type, then contact ZIP validation | Short contact-qualified path |
+| `/d`        | ZIP collection, project type, fence type, then lead form | Short project-detail path |
+| `/e`        | Project type, fence type, then contact details and ZIP | Short contact-detail path |
 
-Routes A-C use the original five questions. Route D checks a config-defined ZIP allowlist, asks only whether the project is a new fence or repair/replacement, asks the fence type, and then opens the lead form. Variant C intentionally omits the Back button on question one because it has no initial lander.
+Routes A-C use the original five questions. Route D collects the project ZIP, asks only whether the project is a new fence or repair/replacement, asks the fence type, and then opens the lead form. No route rejects a ZIP based on its format or service area. ZIP remains a required project-detail field in the browser. Variant C intentionally omits the Back button on question one because it has no initial lander.
 
 ## Project structure
 
@@ -134,7 +134,7 @@ Every screen updates the URL hash while preserving the `/a`, `/b`, `/c`, or `/d`
 
 The Back button moves through the same step history. On variants A and B, Back from question one returns to the lander. Variant C starts at question one and has no first-question Back button.
 
-Route D uses `#zip`, `#step-2-project_type`, `#step-3-fence_type`, `#contact`, and `#thank-you`. Its ZIP is captured once on the first screen and carried into the same flat webhook payload; it is not requested again on the lead form. Edit `CONFIG.zipVerification.allowedZipCodes` as one comma-separated string. Matching is exact after trimming spaces, and an empty list rejects every ZIP.
+Route D uses `#zip`, `#step-2-project_type`, `#step-3-fence_type`, `#contact`, and `#thank-you`. Its ZIP is captured once on the first screen and carried into the same flat webhook payload; it is not requested again on the lead form. The historical 109-ZIP list in `CONFIG.zipVerification.allowedZipCodes` is retained only as a reporting reference and does not restrict quiz submissions.
 
 ## Microsoft Clarity
 
@@ -201,7 +201,7 @@ The funnel captures UTM values, Meta campaign IDs, `fbclid`, `_fbp`, `_fbc`, sou
 
 Submissions use same-origin `POST /api/lead`, forwarding the existing flat URL-encoded payload to the server-only webhook URL. Make returns an explicit matching ingestion receipt before the UI shows success or emits Lead. Network errors, rejections, and timeouts retain the form for retry.
 
-Path E trims the ZIP and requires exactly five digits in the existing 109-ZIP allowlist. The server handoff checks the same generated list, sourced from `CONFIG.zipVerification.allowedZipCodes`. Other routes retain their validation rules.
+As of October 26, 2026, ZIP format and service-area checks have been removed from the quiz browser runtime and Pages submission function. ZIP values, including outside-area ZIPs and ZIP+4, are forwarded as project details. The historical approved-ZIP list remains available for reporting; it no longer generates a server validation module. Contact requirements, consent, signed-test isolation, duplicate handling, confirmed acceptance receipts, and tracking remain in place.
 
 Make scenario 6584903 in the main account preserves HTTP ingestion, Gmail, Google Sheets, and Slack. Webhook Response follows ingestion; notifications require HTTP 201, `notify_eligible=yes`, and `test=false`. Duplicates and signed synthetic requests cannot notify. Normal newly persisted leads retain the existing router dispatch.
 
@@ -235,14 +235,14 @@ Configure the encrypted variables listed above before deploying. Never publish t
 ## Launch checklist
 
 - Confirm `/a`, `/b`, `/c`, and `/d` render the intended experiences.
-- Confirm the approved `/d` campaign/service ZIP list remains current.
+- Confirm `/d` collects a ZIP and continues without a format or service-area check.
 - Confirm every step updates the URL hash and Back navigation does not skip questions.
 - Confirm Clarity requests use project `ydufwdgd3z`.
 - Confirm all four Clarity event sequences appear before building dashboard funnels.
 - Confirm `CONFIG.metaPixelId` matches the A&W Fencing dataset.
 - Configure the Pages Function with encrypted `META_PIXEL_ID` and `META_CAPI_ACCESS_TOKEN` values.
 - Verify matching Pixel/CAPI event IDs and synthetic server Test Events receipts.
-- Confirm the Make webhook exposes contact, quiz, attribution, consent, and CAPI fields as separate values.
+- Confirm outside-area and ZIP+4 entries reach the same Make intake, preserving contact, quiz, attribution, consent, and CAPI fields as separate values.
 - Run signed synthetic webhook tests and verify zero persistence or notification actions. Real delivery remains unverified until separately authorized.
 - Confirm the custom domain serves the latest deployment over HTTPS.
 - Keep `.env` ignored and confirm no secrets exist in `dist/` or Git.
