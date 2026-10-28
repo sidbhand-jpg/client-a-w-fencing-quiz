@@ -1,4 +1,5 @@
 import { validReceipt, hasTestMarker, validTest } from '../_lib/security.js';
+import { normalizeZip, isMetaEligible } from '../_lib/metaEligibility.js';
 const encoder = new TextEncoder();
 
 function json(body, status = 200) {
@@ -61,6 +62,10 @@ export async function onRequestPost({ request, env }) {
   if (eventName === 'Lead') {
     if (!(await validReceipt(input.lead_receipt, eventId, env.AW_TEST_SIGNING_KEY))) return json({ ok: false, error: 'Accepted lead receipt required' }, 403);
     test = input.lead_receipt.test;
+    if (normalizeZip(input.zip) !== input.lead_receipt.zip) return json({ ok: false, error: 'ZIP does not match accepted lead' }, 403);
+    if (!input.lead_receipt.meta_eligible || !isMetaEligible(input.zip)) {
+      return json({ ok: true, skipped: true, reason: 'zip_not_approved', events_received: 0, event_id: eventId, event_name: eventName, test });
+    }
   } else if (hasTestMarker(input)) {
     if (!(await validTest(input, env.AW_TEST_SIGNING_KEY)) || input.lead_event_id !== eventId) return json({ ok: false, error: 'Unauthorized test event' }, 403);
     test = true;

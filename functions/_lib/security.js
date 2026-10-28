@@ -1,3 +1,4 @@
+import { normalizeZip, isMetaEligible } from './metaEligibility.js';
 const encoder = new TextEncoder();
 const testFields = ['lead_event_id', 'submitted_at', 'funnel_variant', 'name', 'email', 'phone', 'zip', 'project_type', 'fence_type', 'sms_consent', 'test_mode'];
 
@@ -39,16 +40,17 @@ export async function validTest(body, secret) {
 }
 
 function receiptMessage(receipt) {
-  return `aw-receipt-v1|${receipt.event_id}|${receipt.issued_at}|${receipt.test}`;
+  return `aw-receipt-v2|${receipt.event_id}|${receipt.issued_at}|${receipt.test}|${receipt.zip}|${receipt.meta_eligible}`;
 }
 
-export async function issueReceipt(eventId, test, secret) {
-  const receipt = { event_id: eventId, issued_at: Date.now(), test };
+export async function issueReceipt(eventId, test, secret, zip) {
+  const receipt = { event_id: eventId, issued_at: Date.now(), test, zip: normalizeZip(zip), meta_eligible: isMetaEligible(zip) };
   return { ...receipt, signature: await sign(receiptMessage(receipt), secret) };
 }
 
 export async function validReceipt(receipt, eventId, secret) {
   if (!receipt || receipt.event_id !== eventId || typeof receipt.test !== 'boolean'
+      || typeof receipt.meta_eligible !== 'boolean' || typeof receipt.zip !== 'string'
       || !Number.isFinite(receipt.issued_at) || Math.abs(Date.now() - receipt.issued_at) > 300000) return false;
   return verify(receiptMessage(receipt), receipt.signature, secret);
 }

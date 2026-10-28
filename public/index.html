@@ -1860,35 +1860,37 @@
         return;
       }
 
-      // Send the matching server-side Lead event from a same-origin Pages
-      // Function. Meta credentials remain server-side and event_id matches Pixel.
-      try {
-        const capiResponse = await fetchWithTimeout('/api/capi', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({
-            event_name: trackingConfig.metaLeadEvent,
-            event_id: payload.capi_event_id,
-            lead_receipt: ingestion.lead_receipt,
-            variant: funnelVariant.toUpperCase(),
-            source_url: payload.source_url,
-            user_agent: payload.user_agent,
-            name: payload.name,
-            email: payload.email,
-            phone: payload.phone,
-            zip: payload.zip,
-            fbp: payload.fbp,
-            fbc: payload.fbc,
-          }),
-        }, CAPI_TIMEOUT_MS);
-        if (!capiResponse.ok) console.warn('CAPI event was not accepted.');
-      } catch (error) {
-        console.warn('CAPI request failed:', error);
-      }
+      // All accepted submissions reach thank-you. Only server-qualified ZIPs
+      // send conversion events; the signed receipt binds eligibility to intake.
+      if (ingestion.lead_receipt?.meta_eligible === true) {
+        try {
+          const capiResponse = await fetchWithTimeout('/api/capi', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              event_name: trackingConfig.metaLeadEvent,
+              event_id: payload.capi_event_id,
+              lead_receipt: ingestion.lead_receipt,
+              variant: funnelVariant.toUpperCase(),
+              source_url: payload.source_url,
+              user_agent: payload.user_agent,
+              name: payload.name,
+              email: payload.email,
+              phone: payload.phone,
+              zip: payload.zip,
+              fbp: payload.fbp,
+              fbc: payload.fbc,
+            }),
+          }, CAPI_TIMEOUT_MS);
+          if (!capiResponse.ok) console.warn('CAPI event was not accepted.');
+        } catch (error) {
+          console.warn('CAPI request failed:', error);
+        }
 
-      // Fire the conversion only after the webhook request is sent.
-      if (typeof fbq !== 'undefined' && attribution.lead_event_id) {
-        fbq('track', trackingConfig.metaLeadEvent, {}, { eventID: attribution.lead_event_id });
+        // Match the accepted, approved-ZIP server event for Meta deduplication.
+        if (typeof fbq !== 'undefined' && attribution.lead_event_id) {
+          fbq('track', trackingConfig.metaLeadEvent, {}, { eventID: attribution.lead_event_id });
+        }
       }
 
       currentStep = THANKS_STEP;

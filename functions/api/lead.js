@@ -20,7 +20,7 @@ export async function onRequestPost({ request, env }) {
     // Make's default "Accepted" reply is not an ingestion acknowledgment.
     if (!upstream.ok || receipt?.accepted !== true || receipt.test !== test || receipt.event_id !== body.lead_event_id
         || (!test && !receipt.id)) return json({ ok: false, error: 'We could not confirm your request. Please try again.' }, 502);
-    const leadReceipt = await issueReceipt(body.lead_event_id, test, env.AW_TEST_SIGNING_KEY);
+    const leadReceipt = await issueReceipt(body.lead_event_id, test, env.AW_TEST_SIGNING_KEY, body.zip);
     return json({ ok: true, accepted: true, duplicate: Boolean(receipt.duplicate), test, event_id: body.lead_event_id, lead_receipt: leadReceipt });
   } catch {
     return json({ ok: false, error: 'We could not send your request. Please try again.' }, 502);

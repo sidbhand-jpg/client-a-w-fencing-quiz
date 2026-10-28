@@ -187,13 +187,15 @@ The public Meta Pixel ID in `CONFIG.metaPixelId` enables these browser events:
 | ------------ | ---------------------------------------------- | ------------------------------------------- |
 | `PageView`   | Page load                                      | Standard browser event                      |
 | `FunnelStep` | Each visited funnel screen                     | Includes step and variant                   |
-| `Lead`       | After ingestion acceptance              | Uses `lead_event_id` as the Pixel `eventID` |
+| `Lead`       | After ingestion acceptance, only for approved ZIPs | Uses `lead_event_id` as the Pixel `eventID` |
 
 The flat form payload includes `capi_event_name`, `capi_event_id`, `capi_event_time`, and `capi_action_source`, plus the source URL, browser user agent, `_fbp`, and `_fbc` as separate values.
 
 The same-origin `/api/capi` Pages Function uses the same event ID as the browser Pixel event so Meta can deduplicate them. It normalizes and SHA-256 hashes email, phone, first name, last name, ZIP, and country server-side; it also supplies available browser IDs, user agent, and Cloudflare client IP. Meta credentials never enter the built browser assets.
 
-Both Lead senders require confirmed ingestion acceptance. Server Lead additionally requires a short-lived signed acceptance receipt. PageView and FunnelStep use matching browser/server event IDs. The quiz Pages Function is the sole quiz CAPI sender; the Make intake contains no Meta relay. A&W dataset 2105161930386830 was disconnected and excluded from Meta’s automatic Conversions API relay to prevent a second quiz server sender.
+Both Lead senders require confirmed ingestion acceptance and an approved project ZIP. The Pages intake signs the normalized ZIP and `meta_eligible` result in a short-lived acceptance receipt; the browser only sends Lead when that signed result is true. CAPI verifies the receipt, matching ZIP, and current approved list before sending. An outside-area or malformed ZIP still reaches Make and thank-you, but produces no Pixel or CAPI Lead event. ZIP+4 qualifies using its five-digit prefix only when the complete input is a valid ZIP+4. `scripts/build-pages.mjs` generates the server list from `CONFIG.zipVerification.allowedZipCodes`, keeping the 109-ZIP configuration as the source of truth. Client-supplied eligibility flags and legacy receipts cannot authorize an event.
+
+PageView and FunnelStep remain enabled for traffic analytics and use matching browser/server event IDs. The quiz Pages Function is the sole quiz CAPI sender; the Make intake contains no Meta relay. A&W dataset 2105161930386830 was disconnected and excluded from Meta’s automatic Conversions API relay to prevent a second quiz server sender.
 
 ## Attribution and lead delivery
 
@@ -201,7 +203,7 @@ The funnel captures UTM values, Meta campaign IDs, `fbclid`, `_fbp`, `_fbc`, sou
 
 Submissions use same-origin `POST /api/lead`, forwarding the existing flat URL-encoded payload to the server-only webhook URL. Make returns an explicit matching ingestion receipt before the UI shows success or emits Lead. Network errors, rejections, and timeouts retain the form for retry.
 
-As of October 26, 2026, ZIP format and service-area checks have been removed from Route E and the Pages submission function. Route E ZIP values, including outside-area ZIPs and ZIP+4, are forwarded as project details. Route D retains its original browser ZIP-first validation against the configured approved list. That list no longer generates a server validation module. Contact requirements, consent, signed-test isolation, duplicate handling, confirmed acceptance receipts, and tracking remain in place.
+As of October 28, 2026, Route E and the Pages submission function accept outside-area ZIPs, malformed ZIP values, and ZIP+4 as project details. Route E still requires the ZIP field. The approved ZIP list controls Meta Lead conversion eligibility separately from submission acceptance. Route D retains its original browser ZIP-first validation. Contact requirements, consent, signed-test isolation, duplicate handling, and confirmed acceptance receipts remain in place.
 
 Make scenario 6584903 in the main account preserves HTTP ingestion, Gmail, Google Sheets, and Slack. Webhook Response follows ingestion; notifications require HTTP 201, `notify_eligible=yes`, and `test=false`. Duplicates and signed synthetic requests cannot notify. Normal newly persisted leads retain the existing router dispatch.
 
@@ -241,7 +243,7 @@ Configure the encrypted variables listed above before deploying. Never publish t
 - Confirm all four Clarity event sequences appear before building dashboard funnels.
 - Confirm `CONFIG.metaPixelId` matches the A&W Fencing dataset.
 - Configure the Pages Function with encrypted `META_PIXEL_ID` and `META_CAPI_ACCESS_TOKEN` values.
-- Verify matching Pixel/CAPI event IDs and synthetic server Test Events receipts.
+- Verify matching Pixel/CAPI event IDs and synthetic server Test Events receipts for approved ZIPs; verify outside-area/malformed ZIPs are accepted but emit neither Lead event.
 - Confirm outside-area and ZIP+4 entries reach the same Make intake, preserving contact, quiz, attribution, consent, and CAPI fields as separate values.
 - Run signed synthetic webhook tests and verify zero persistence or notification actions. Real delivery remains unverified until separately authorized.
 - Confirm the custom domain serves the latest deployment over HTTPS.
